@@ -1,0 +1,591 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | Restaurant Billing System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="dashboard-wrapper">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">R</div>
+
+            <div>
+                <h2>Restaurant</h2>
+                <span>Billing System</span>
+            </div>
+
+        </div>
+
+
+        <div class="menu-title">
+            MAIN MENU
+        </div>
+
+
+        <nav>
+
+            <a href="/dashboard" class="nav-link active">
+
+                <span class="nav-icon">▦</span>
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="/menu" class="nav-link">
+
+                <span class="nav-icon">☰</span>
+                <span>Menu</span>
+
+            </a>
+
+
+            <a href="billing" class="nav-link">
+
+                <span class="nav-icon">▤</span>
+                <span>Billing</span>
+
+            </a>
+
+
+            <a href="#" class="nav-link">
+
+                <span class="nav-icon">♙</span>
+                <span>Customers</span>
+
+            </a>
+
+
+            <a href="#" class="nav-link">
+
+                <span class="nav-icon">▥</span>
+                <span>Inventory</span>
+
+            </a>
+
+
+            <a href="#" class="nav-link">
+
+                <span class="nav-icon">◴</span>
+                <span>Reports</span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="/logout" class="logout-link">
+
+                <span>↪</span>
+                Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="dashboard-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <p class="page-label">
+                    OVERVIEW
+                </p>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <div class="profile-avatar">
+                    A
+                </div>
+
+                <div class="profile-info">
+
+                    <strong>Admin</strong>
+
+                    <span>Administrator</span>
+
+                </div>
+
+                <span class="profile-arrow">
+                    ▾
+                </span>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- WELCOME -->
+
+        <section class="welcome-banner">
+
+            <div>
+
+                <p class="banner-small">
+                    GOOD DAY, ADMIN
+                </p>
+
+                <h2>
+                    Welcome back 👋
+                </h2>
+
+                <p>
+                    Here's what's happening with your restaurant today.
+                </p>
+
+            </div>
+
+
+            <div class="banner-date">
+
+                <span>Today</span>
+
+                <strong id="currentDate">
+                    --
+                </strong>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- STAT CARDS -->
+
+        <section class="stats-grid">
+
+
+            <!-- MENU -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon menu-color">
+                        ☰
+                    </div>
+
+                    <span class="stat-badge">
+                        Active
+                    </span>
+
+                </div>
+
+                <p>
+                    Total Menu Items
+                </p>
+
+                <h2>
+                    {{ total_menu }}
+                </h2>
+
+                <div class="stat-footer">
+                    Items available in menu
+                </div>
+
+            </div>
+
+
+
+            <!-- SALES -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon sales-color">
+                        ₹
+                    </div>
+
+                    <span class="stat-badge">
+                        Today
+                    </span>
+
+                </div>
+
+                <p>
+                    Today's Sales
+                </p>
+
+                <h2>
+                    ₹0
+                </h2>
+
+                <div class="stat-footer">
+                    Total sales generated today
+                </div>
+
+            </div>
+
+
+
+            <!-- CUSTOMERS -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon customer-color">
+                        ♙
+                    </div>
+
+                    <span class="stat-badge">
+                        Total
+                    </span>
+
+                </div>
+
+                <p>
+                    Total Customers
+                </p>
+
+                <h2>
+                    0
+                </h2>
+
+                <div class="stat-footer">
+                    Registered customers
+                </div>
+
+            </div>
+
+
+
+            <!-- ORDERS -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon order-color">
+                        ▤
+                    </div>
+
+                    <span class="stat-badge">
+                        Today
+                    </span>
+
+                </div>
+
+                <p>
+                    Today's Orders
+                </p>
+
+                <h2>
+                    0
+                </h2>
+
+                <div class="stat-footer">
+                    Orders processed today
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- LOWER SECTION -->
+
+        <section class="dashboard-grid">
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="dashboard-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h3>
+                            Quick Actions
+                        </h3>
+
+                        <p>
+                            Frequently used features
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-actions">
+
+
+                    <a href="/menu" class="quick-action">
+
+                        <div class="action-icon">
+                            ☰
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Manage Menu
+                            </strong>
+
+                            <span>
+                                Add or edit food items
+                            </span>
+
+                        </div>
+
+                        <b>
+                            →
+                        </b>
+
+                    </a>
+
+
+
+                    <a href="#" class="quick-action">
+
+                        <div class="action-icon">
+                            ₹
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Create Bill
+                            </strong>
+
+                            <span>
+                                Generate a new customer bill
+                            </span>
+
+                        </div>
+
+                        <b>
+                            →
+                        </b>
+
+                    </a>
+
+
+
+                    <a href="#" class="quick-action">
+
+                        <div class="action-icon">
+                            ▥
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Check Inventory
+                            </strong>
+
+                            <span>
+                                Manage your restaurant stock
+                            </span>
+
+                        </div>
+
+                        <b>
+                            →
+                        </b>
+
+                    </a>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SYSTEM STATUS -->
+
+            <div class="dashboard-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h3>
+                            System Overview
+                        </h3>
+
+                        <p>
+                            Current system status
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="system-list">
+
+
+                    <div class="system-item">
+
+                        <div class="system-left">
+
+                            <span class="status-dot"></span>
+
+                            <div>
+
+                                <strong>
+                                    Billing System
+                                </strong>
+
+                                <span>
+                                    System operational
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <span class="online">
+                            Online
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="system-item">
+
+                        <div class="system-left">
+
+                            <span class="status-dot"></span>
+
+                            <div>
+
+                                <strong>
+                                    Database
+                                </strong>
+
+                                <span>
+                                    Database connected
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <span class="online">
+                            Connected
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="system-item">
+
+                        <div class="system-left">
+
+                            <span class="status-dot"></span>
+
+                            <div>
+
+                                <strong>
+                                    Menu System
+                                </strong>
+
+                                <span>
+                                    Menu management ready
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <span class="online">
+                            Ready
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <footer class="dashboard-footer">
+
+            Restaurant Billing System
+            <span>•</span>
+            Admin Dashboard
+            <span>•</span>
+            2026
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+
+<script>
+
+    const dateElement =
+        document.getElementById("currentDate");
+
+    const today = new Date();
+
+    const options = {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    };
+
+    dateElement.textContent =
+        today.toLocaleDateString("en-IN", options);
+
+</script>
+
+
+</body>
+
+</html>
+```

@@ -1,0 +1,409 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Add Menu Item | Restaurant Billing System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="dashboard-wrapper">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">R</div>
+
+            <div>
+                <h2>Restaurant</h2>
+                <span>Billing System</span>
+            </div>
+
+        </div>
+
+
+        <div class="menu-title">
+            MAIN MENU
+        </div>
+
+
+        <nav>
+
+            <a href="/dashboard" class="nav-link">
+
+                <span class="nav-icon">▦</span>
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="/menu" class="nav-link active">
+
+                <span class="nav-icon">☰</span>
+                <span>Menu</span>
+
+            </a>
+
+
+            <a href="#" class="nav-link">
+
+                <span class="nav-icon">▤</span>
+                <span>Billing</span>
+
+            </a>
+
+
+            <a href="#" class="nav-link">
+
+                <span class="nav-icon">♙</span>
+                <span>Customers</span>
+
+            </a>
+
+
+            <a href="#" class="nav-link">
+
+                <span class="nav-icon">▥</span>
+                <span>Inventory</span>
+
+            </a>
+
+
+            <a href="#" class="nav-link">
+
+                <span class="nav-icon">◴</span>
+                <span>Reports</span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="/logout" class="logout-link">
+
+                <span>↪</span>
+                Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="dashboard-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <p class="page-label">
+                    MENU MANAGEMENT
+                </p>
+
+                <h1>
+                    Add New Item
+                </h1>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <div class="profile-avatar">
+                    A
+                </div>
+
+                <div class="profile-info">
+
+                    <strong>Admin</strong>
+
+                    <span>Administrator</span>
+
+                </div>
+
+                <span class="profile-arrow">
+                    ▾
+                </span>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- FORM AREA -->
+
+        <section class="add-menu-layout">
+
+
+            <!-- FORM CARD -->
+
+            <div class="add-menu-card">
+
+
+                <div class="form-header">
+
+                    <div class="form-main-icon">
+                        +
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Add Menu Item
+                        </h2>
+
+                        <p>
+                            Add a new food item to your restaurant menu.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <form method="POST">
+
+
+                    <!-- FOOD NAME -->
+
+                    <div class="form-group">
+
+                        <label for="name">
+                            Food Name
+                        </label>
+
+                        <div class="form-input-wrapper">
+
+                            <span class="form-input-icon">
+                                🍴
+                            </span>
+
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                placeholder="e.g. Paneer Butter Masala"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CATEGORY -->
+
+                    <div class="form-group">
+
+                        <label for="category">
+                            Category
+                        </label>
+
+                        <div class="form-input-wrapper">
+
+                            <span class="form-input-icon">
+                                ☰
+                            </span>
+
+                            <input
+                                type="text"
+                                id="category"
+                                name="category"
+                                placeholder="e.g. Main Course"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PRICE -->
+
+                    <div class="form-group">
+
+                        <label for="price">
+                            Price
+                        </label>
+
+                        <div class="form-input-wrapper">
+
+                            <span class="form-input-icon price-icon">
+                                ₹
+                            </span>
+
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                placeholder="e.g. 250"
+                                step="0.01"
+                                min="0"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="form-actions">
+
+                        <a href="/menu" class="cancel-button">
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="save-button"
+                        >
+
+                            <span>✓</span>
+
+                            Add Item
+
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+
+
+            <!-- INFO CARD -->
+
+            <div class="add-menu-info">
+
+
+                <div class="info-icon">
+                    ☰
+                </div>
+
+
+                <h3>
+                    Build your menu
+                </h3>
+
+                <p>
+                    Keep your restaurant menu organized and
+                    up to date for faster billing.
+                </p>
+
+
+                <div class="info-list">
+
+                    <div class="info-item">
+
+                        <span>✓</span>
+
+                        <div>
+
+                            <strong>
+                                Clear food names
+                            </strong>
+
+                            <p>
+                                Use simple and recognizable names.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span>✓</span>
+
+                        <div>
+
+                            <strong>
+                                Correct category
+                            </strong>
+
+                            <p>
+                                Helps organize your menu items.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span>✓</span>
+
+                        <div>
+
+                            <strong>
+                                Accurate pricing
+                            </strong>
+
+                            <p>
+                                Enter the current selling price.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <footer class="dashboard-footer">
+
+            Restaurant Billing System
+            <span>•</span>
+            Menu Management
+            <span>•</span>
+            2026
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
+```

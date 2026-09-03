@@ -1,0 +1,1030 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Billing | Restaurant Billing System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        /* =====================================================
+           BILLING PAGE - PREMIUM POS DESIGN
+           ===================================================== */
+
+        .billing-page {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 390px;
+            gap: 24px;
+            padding: 10px 0 30px;
+            align-items: start;
+        }
+
+        /* LEFT AREA */
+        .billing-left {
+            min-width: 0;
+        }
+
+        .billing-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .small-title {
+            margin: 0 0 6px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #8b5cf6;
+        }
+
+        .billing-heading h2,
+        .bill-header h2 {
+            margin: 0;
+            font-size: 27px;
+            font-weight: 750;
+            letter-spacing: -0.5px;
+        }
+
+        .billing-heading p:not(.small-title) {
+            margin: 7px 0 0;
+            color: #8b92a5;
+            font-size: 13px;
+        }
+
+        .order-number {
+            background: linear-gradient(135deg, #f5f3ff, #fafafa);
+            border: 1px solid #e9e5ff;
+            border-radius: 14px;
+            padding: 12px 18px;
+            text-align: right;
+        }
+
+        .order-number span {
+            display: block;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1.3px;
+            color: #999;
+            margin-bottom: 3px;
+        }
+
+        .order-number strong {
+            font-size: 18px;
+            color: #7c3aed;
+        }
+
+        /* SEARCH */
+        .billing-search {
+            height: 52px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 17px;
+            background: #ffffff;
+            border: 1px solid #ececf2;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(30, 30, 50, 0.04);
+            margin-bottom: 20px;
+            transition: 0.25s ease;
+        }
+
+        .billing-search:focus-within {
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.08);
+        }
+
+        .billing-search span {
+            font-size: 25px;
+            color: #9ca3af;
+            line-height: 1;
+        }
+
+        .billing-search input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 14px;
+            color: #252532;
+        }
+
+        .billing-search input::placeholder {
+            color: #a8acb8;
+        }
+
+        /* MENU GRID */
+        .billing-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 15px;
+        }
+
+        .billing-item {
+            position: relative;
+            min-height: 175px;
+            padding: 17px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 1px solid #ededf2;
+            border-radius: 18px;
+            box-shadow: 0 5px 18px rgba(30, 30, 50, 0.035);
+            overflow: hidden;
+            transition: transform 0.25s ease,
+                        box-shadow 0.25s ease,
+                        border-color 0.25s ease;
+        }
+
+        .billing-item::before {
+            content: "";
+            position: absolute;
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.06);
+            top: -35px;
+            right: -30px;
+        }
+
+        .billing-item:hover {
+            transform: translateY(-4px);
+            border-color: #ddd6fe;
+            box-shadow: 0 12px 28px rgba(80, 60, 130, 0.10);
+        }
+
+        .billing-item-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 13px;
+            background: #f5f3ff;
+            font-size: 21px;
+            margin-bottom: 13px;
+        }
+
+        .billing-item-info h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: #252532;
+        }
+
+        .billing-item-info span {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: #f7f7f9;
+            color: #858895;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .billing-item-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .billing-item-bottom strong {
+            font-size: 16px;
+            color: #27272f;
+        }
+
+        .add-item-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 11px;
+            background: #7c3aed;
+            color: white;
+            font-size: 23px;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 5px 12px rgba(124, 58, 237, 0.22);
+            transition: 0.2s ease;
+        }
+
+        .add-item-btn:hover {
+            background: #6d28d9;
+            transform: scale(1.08);
+        }
+
+        .add-item-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* EMPTY MENU */
+        .no-items-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 65px 20px;
+            background: #ffffff;
+            border: 1px dashed #dcdce5;
+            border-radius: 18px;
+        }
+
+        .no-items-message div {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .no-items-message h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .no-items-message p {
+            color: #8b8f9c;
+            font-size: 13px;
+        }
+
+        /* =====================================================
+           BILL CARD
+           ===================================================== */
+
+        .billing-right {
+            position: sticky;
+            top: 20px;
+        }
+
+        .bill-card {
+            background: #ffffff;
+            border: 1px solid #ececf2;
+            border-radius: 22px;
+            padding: 21px;
+            box-shadow: 0 12px 35px rgba(30, 30, 50, 0.07);
+        }
+
+        .bill-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #f0f0f4;
+        }
+
+        .bill-header h2 {
+            font-size: 23px;
+        }
+
+        #cartCount {
+            padding: 7px 11px;
+            border-radius: 9px;
+            background: #f5f3ff;
+            color: #7c3aed;
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        /* CART */
+        .cart-items {
+            min-height: 145px;
+            max-height: 275px;
+            overflow-y: auto;
+            padding: 12px 2px;
+        }
+
+        .cart-items::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .cart-items::-webkit-scrollbar-thumb {
+            background: #d8d4e8;
+            border-radius: 10px;
+        }
+
+        .empty-cart {
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .empty-cart-icon {
+            width: 54px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7f5ff;
+            border-radius: 16px;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .empty-cart h3 {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .empty-cart p {
+            max-width: 210px;
+            margin: 6px 0 0;
+            color: #999daa;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* SUMMARY */
+        .bill-summary {
+            background: #fafafd;
+            border: 1px solid #f0eff5;
+            border-radius: 15px;
+            padding: 15px;
+        }
+
+        .summary-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #777b89;
+        }
+
+        .summary-row strong {
+            color: #33343d;
+            font-size: 13px;
+        }
+
+        .discount-input {
+            display: flex;
+            align-items: center;
+            height: 31px;
+            background: #ffffff;
+            border: 1px solid #e5e4ea;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .discount-input span {
+            padding-left: 9px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .discount-input input {
+            width: 62px;
+            height: 100%;
+            border: none;
+            outline: none;
+            padding: 0 8px;
+            text-align: right;
+            font-size: 12px;
+            background: transparent;
+        }
+
+        .summary-divider {
+            height: 1px;
+            background: #e8e7ee;
+            margin: 13px 0;
+        }
+
+        .total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .total-row span {
+            font-size: 14px;
+            font-weight: 750;
+            color: #34343d;
+        }
+
+        .total-row strong {
+            font-size: 23px;
+            font-weight: 800;
+            color: #7c3aed;
+        }
+
+        /* PAYMENT */
+        .payment-section {
+            margin-top: 18px;
+        }
+
+        .payment-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 12px;
+            font-weight: 750;
+            color: #4b4c57;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .payment-btn {
+            height: 55px;
+            border: 1px solid #e9e8ef;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #747784;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            font-size: 17px;
+            transition: 0.2s ease;
+        }
+
+        .payment-btn span {
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .payment-btn:hover {
+            border-color: #c4b5fd;
+            background: #faf9ff;
+        }
+
+        .payment-btn.active {
+            border-color: #8b5cf6;
+            background: #f5f3ff;
+            color: #7c3aed;
+            box-shadow: inset 0 0 0 1px #8b5cf6;
+        }
+
+        /* GENERATE BUTTON */
+        .generate-bill-btn {
+            width: 100%;
+            height: 53px;
+            margin-top: 18px;
+            border: none;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            font-size: 14px;
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 9px 20px rgba(124, 58, 237, 0.23);
+            transition: 0.25s ease;
+        }
+
+        .generate-bill-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 13px 25px rgba(124, 58, 237, 0.30);
+        }
+
+        .generate-bill-btn span:last-child {
+            font-size: 21px;
+        }
+
+        .clear-cart-btn {
+            width: 100%;
+            height: 42px;
+            margin-top: 8px;
+            border: 1px solid #ececf1;
+            border-radius: 11px;
+            background: #ffffff;
+            color: #9295a0;
+            font-size: 12px;
+            font-weight: 650;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .clear-cart-btn:hover {
+            color: #ef4444;
+            border-color: #fecaca;
+            background: #fffafa;
+        }
+
+        /* FOOTER */
+        .dashboard-footer {
+            margin-top: 10px;
+            opacity: 0.65;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media (max-width: 1100px) {
+            .billing-page {
+                grid-template-columns: minmax(0, 1fr) 350px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .billing-page {
+                grid-template-columns: 1fr;
+            }
+
+            .billing-right {
+                position: relative;
+                top: auto;
+            }
+
+            .billing-menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .billing-heading {
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .order-number {
+                padding: 9px 12px;
+            }
+
+            .billing-heading h2 {
+                font-size: 22px;
+            }
+
+            .billing-heading p:not(.small-title) {
+                display: none;
+            }
+
+            .billing-menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .billing-item {
+                min-height: 160px;
+                padding: 13px;
+            }
+
+            .billing-item-info h3 {
+                font-size: 13px;
+            }
+
+            .bill-card {
+                padding: 16px;
+                border-radius: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="dashboard-wrapper">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <div class="brand-icon">R</div>
+
+            <div>
+                <h2>Restaurant</h2>
+                <span>Billing System</span>
+            </div>
+        </div>
+
+        <div class="sidebar-section-title">
+            MAIN MENU
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/dashboard" class="nav-link">
+                <span class="nav-icon">▦</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/menu" class="nav-link">
+                <span class="nav-icon">☰</span>
+                <span>Menu</span>
+            </a>
+
+            <a href="/billing" class="nav-link active">
+                <span class="nav-icon">▤</span>
+                <span>Billing</span>
+            </a>
+
+            <a href="#" class="nav-link">
+                <span class="nav-icon">♙</span>
+                <span>Customers</span>
+            </a>
+
+            <a href="#" class="nav-link">
+                <span class="nav-icon">▥</span>
+                <span>Inventory</span>
+            </a>
+
+            <a href="#" class="nav-link">
+                <span class="nav-icon">◷</span>
+                <span>Reports</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="dashboard-content">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+                <p class="topbar-label">
+                    SALES MANAGEMENT
+                </p>
+
+                <h1>Billing</h1>
+            </div>
+
+            <div class="admin-profile">
+
+                <div class="admin-avatar">
+                    A
+                </div>
+
+                <div>
+                    <strong>Admin</strong>
+                    <span>Administrator</span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= BILLING AREA ================= -->
+
+        <section class="billing-page">
+
+            <!-- LEFT SIDE -->
+
+            <div class="billing-left">
+
+                <div class="billing-heading">
+
+                    <div>
+
+                        <p class="small-title">
+                            CREATE NEW BILL
+                        </p>
+
+                        <h2>
+                            Select Items
+                        </h2>
+
+                        <p>
+                            Add food items to create a new customer bill.
+                        </p>
+
+                    </div>
+
+                    <div class="order-number">
+
+                        <span>ORDER</span>
+
+                        <strong>#001</strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SEARCH -->
+
+                <div class="billing-search">
+
+                    <span>⌕</span>
+
+                    <input
+                        type="text"
+                        id="menuSearch"
+                        placeholder="Search food item..."
+                        autocomplete="off">
+
+                </div>
+
+
+                <!-- MENU ITEMS -->
+
+                <div class="billing-menu-grid" id="menuGrid">
+
+                    {% for item in items %}
+
+                    <div class="billing-item"
+                         data-name="{{ item.name|lower }}"
+                         data-category="{{ item.category|lower }}"
+                         data-price="{{ item.price }}">
+
+                        <div class="billing-item-icon">
+                            🍴
+                        </div>
+
+                        <div class="billing-item-info">
+
+                            <h3>
+                                {{ item.name }}
+                            </h3>
+
+                            <span>
+                                {{ item.category }}
+                            </span>
+
+                        </div>
+
+                        <div class="billing-item-bottom">
+
+                            <strong>
+                                ₹{{ "%.2f"|format(item.price) }}
+                            </strong>
+
+                            <button
+                                type="button"
+                                class="add-item-btn"
+                                onclick="addToCart(
+                                    {{ item.id }},
+                                    '{{ item.name|replace("'", "\\'") }}',
+                                    {{ item.price }}
+                                )">
+
+                                +
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="no-items-message">
+
+                        <div>🍽️</div>
+
+                        <h3>No Menu Items</h3>
+
+                        <p>
+                            Add some food items from Menu first.
+                        </p>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= RIGHT SIDE : BILL ================= -->
+
+            <div class="billing-right">
+
+                <div class="bill-card">
+
+                    <div class="bill-header">
+
+                        <div>
+
+                            <p class="small-title">
+                                CURRENT ORDER
+                            </p>
+
+                            <h2>
+                                Your Bill
+                            </h2>
+
+                        </div>
+
+                        <span id="cartCount">
+                            0 Items
+                        </span>
+
+                    </div>
+
+
+                    <!-- CART -->
+
+                    <div class="cart-items" id="cartItems">
+
+                        <div class="empty-cart">
+
+                            <div class="empty-cart-icon">
+                                🛒
+                            </div>
+
+                            <h3>
+                                Cart is Empty
+                            </h3>
+
+                            <p>
+                                Select items from the menu
+                                to start billing.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BILL CALCULATION -->
+
+                    <div class="bill-summary">
+
+                        <div class="summary-row">
+
+                            <span>
+                                Subtotal
+                            </span>
+
+                            <strong id="subtotal">
+                                ₹0.00
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                GST (5%)
+                            </span>
+
+                            <strong id="gst">
+                                ₹0.00
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row discount-row">
+
+                            <span>
+                                Discount
+                            </span>
+
+                            <div class="discount-input">
+
+                                <span>₹</span>
+
+                                <input
+                                    type="number"
+                                    id="discount"
+                                    value="0"
+                                    min="0"
+                                    step="1">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-divider"></div>
+
+
+                        <div class="total-row">
+
+                            <span>
+                                Grand Total
+                            </span>
+
+                            <strong id="grandTotal">
+                                ₹0.00
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PAYMENT -->
+
+                    <div class="payment-section">
+
+                        <label>
+                            Payment Method
+                        </label>
+
+                        <div class="payment-methods">
+
+                            <button
+                                type="button"
+                                class="payment-btn active"
+                                onclick="selectPayment(this, 'Cash')">
+
+                                💵
+                                <span>Cash</span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="payment-btn"
+                                onclick="selectPayment(this, 'UPI')">
+
+                                📱
+                                <span>UPI</span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="payment-btn"
+                                onclick="selectPayment(this, 'Card')">
+
+                                💳
+                                <span>Card</span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GENERATE BILL -->
+
+                    <button
+                        type="button"
+                        class="generate-bill-btn"
+                        onclick="generateBill()">
+
+                        <span>
+                            Generate Bill
+                        </span>
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="clear-cart-btn"
+                        onclick="clearCart()">
+
+                        Clear Order
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer class="dashboard-footer">
+
+            Restaurant Billing System
+
+            <span>•</span>
+
+            Billing Management
+
+            <span>•</span>
+
+            2026
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
+```

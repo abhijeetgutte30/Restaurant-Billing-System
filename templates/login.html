@@ -1,0 +1,222 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Restaurant Billing System | Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <!-- Left Side -->
+        <div class="login-left">
+
+            <div class="brand">
+                <div class="brand-icon">R</div>
+
+                <div>
+                    <h2>Restaurant</h2>
+                    <span>Billing System</span>
+                </div>
+            </div>
+
+            <div class="welcome">
+
+                <p class="small-title">WELCOME BACK</p>
+
+                <h1>
+                    Manage your<br>
+                    restaurant <span>smarter.</span>
+                </h1>
+
+                <p class="description">
+                    Everything you need to manage billing, customers,
+                    inventory and reports — all in one place.
+                </p>
+
+            </div>
+
+            <div class="features">
+
+                <div class="feature">
+                    <div class="feature-icon">✓</div>
+                    <div>
+                        <strong>Fast Billing</strong>
+                        <p>Create bills in seconds</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">✓</div>
+                    <div>
+                        <strong>Inventory Control</strong>
+                        <p>Keep track of your stock</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">✓</div>
+                    <div>
+                        <strong>Smart Reports</strong>
+                        <p>Understand your business</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="copyright">
+                © 2026 Restaurant Billing System
+            </div>
+
+        </div>
+
+
+        <!-- Right Side -->
+        <div class="login-right">
+
+            <div class="login-card">
+
+                <div class="mobile-logo">
+                    <div class="brand-icon">R</div>
+                </div>
+
+                <p class="login-label">ADMIN PORTAL</p>
+
+                <h2>Welcome back 👋</h2>
+
+                <p class="login-subtitle">
+                    Sign in to continue to your dashboard
+                </p>
+
+
+                <!-- Flash Message -->
+                {% with messages = get_flashed_messages() %}
+
+                    {% if messages %}
+
+                        <div class="error-message">
+                            <span>!</span>
+                            {{ messages[0] }}
+                        </div>
+
+                    {% endif %}
+
+                {% endwith %}
+
+
+                <form method="POST">
+
+                    <div class="input-group">
+
+                        <label>Username</label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">👤</span>
+
+                            <input
+                                type="text"
+                                name="username"
+                                placeholder="Enter your username"
+                                autocomplete="username"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Password</label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">🔒</span>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="show-password"
+                                onclick="togglePassword()"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <button type="submit" class="login-button">
+
+                        <span>Login to Dashboard</span>
+
+                        <span class="arrow">→</span>
+
+                    </button>
+
+                </form>
+
+
+                <div class="secure-login">
+
+                    <span>🔐</span>
+
+                    <p>
+                        Secure admin access
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function togglePassword() {
+
+            const password =
+                document.getElementById("password");
+
+            if (password.type === "password") {
+
+                password.type = "text";
+
+            } else {
+
+                password.type = "password";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
+```

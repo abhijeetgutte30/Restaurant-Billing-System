@@ -1,4 +1,4 @@
-```html
+made by abhi
 <!DOCTYPE html>
 <html lang="en">
 
@@ -762,11 +762,10 @@
                             <button
                                 type="button"
                                 class="add-item-btn"
-                                onclick="addToCart(
-                                    {{ item.id }},
-                                    '{{ item.name|replace("'", "\\'") }}',
-                                    {{ item.price }}
-                                )">
+                                data-item-id="{{ item.id }}"
+                                data-item-name="{{ item.name|e }}"
+                                data-item-price="{{ item.price }}"
+                                onclick="addToCart(this.dataset.itemId, this.dataset.itemName, this.dataset.itemPrice)">
 
                                 +
 
@@ -1022,7 +1021,7 @@
 
 <!-- ================= JAVASCRIPT ================= -->
 
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}?v=2"></script>
 
 </body>
 

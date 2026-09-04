@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,7 +18,9 @@
 <div class="dashboard-wrapper">
 
 
-    <!-- SIDEBAR -->
+    <!-- ==============================
+         SIDEBAR
+    =============================== -->
 
     <aside class="sidebar">
 
@@ -66,7 +67,9 @@
             </a>
 
 
-            <a href="#" class="nav-link">
+            <!-- CUSTOMERS - NOW ACTIVE -->
+
+            <a href="/customers" class="nav-link">
 
                 <span class="nav-icon">♙</span>
                 <span>Customers</span>
@@ -107,7 +110,9 @@
 
 
 
-    <!-- MAIN CONTENT -->
+    <!-- ==============================
+         MAIN CONTENT
+    =============================== -->
 
     <main class="dashboard-content">
 
@@ -153,7 +158,9 @@
 
 
 
-        <!-- WELCOME -->
+        <!-- ==============================
+             WELCOME BANNER
+        =============================== -->
 
         <section class="welcome-banner">
 
@@ -188,7 +195,9 @@
 
 
 
-        <!-- STAT CARDS -->
+        <!-- ==============================
+             STAT CARDS
+        =============================== -->
 
         <section class="stats-grid">
 
@@ -278,7 +287,7 @@
                 </p>
 
                 <h2>
-                    0
+                    {{ total_customers }}
                 </h2>
 
                 <div class="stat-footer">
@@ -310,7 +319,7 @@
                 </p>
 
                 <h2>
-                    0
+                    {{ total_orders }}
                 </h2>
 
                 <div class="stat-footer">
@@ -323,7 +332,9 @@
 
 
 
-        <!-- LOWER SECTION -->
+        <!-- ==============================
+             LOWER SECTION
+        =============================== -->
 
         <section class="dashboard-grid">
 
@@ -352,6 +363,8 @@
                 <div class="quick-actions">
 
 
+                    <!-- MANAGE MENU -->
+
                     <a href="/menu" class="quick-action">
 
                         <div class="action-icon">
@@ -378,7 +391,9 @@
 
 
 
-                    <a href="#" class="quick-action">
+                    <!-- CREATE BILL -->
+
+                    <a href="/billing" class="quick-action">
 
                         <div class="action-icon">
                             ₹
@@ -403,6 +418,36 @@
                     </a>
 
 
+
+                    <!-- CUSTOMERS -->
+
+                    <a href="/customers" class="quick-action">
+
+                        <div class="action-icon">
+                            ♙
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Customers
+                            </strong>
+
+                            <span>
+                                View customer records and tables
+                            </span>
+
+                        </div>
+
+                        <b>
+                            →
+                        </b>
+
+                    </a>
+
+
+
+                    <!-- INVENTORY -->
 
                     <a href="#" class="quick-action">
 
@@ -435,7 +480,9 @@
 
 
 
-            <!-- SYSTEM STATUS -->
+            <!-- ==============================
+                 SYSTEM STATUS
+            =============================== -->
 
             <div class="dashboard-panel">
 
@@ -458,6 +505,8 @@
 
                 <div class="system-list">
 
+
+                    <!-- BILLING -->
 
                     <div class="system-item">
 
@@ -487,6 +536,8 @@
 
 
 
+                    <!-- DATABASE -->
+
                     <div class="system-item">
 
                         <div class="system-left">
@@ -515,6 +566,8 @@
 
 
 
+                    <!-- MENU -->
+
                     <div class="system-item">
 
                         <div class="system-left">
@@ -542,6 +595,36 @@
                     </div>
 
 
+
+                    <!-- CUSTOMER SYSTEM -->
+
+                    <div class="system-item">
+
+                        <div class="system-left">
+
+                            <span class="status-dot"></span>
+
+                            <div>
+
+                                <strong>
+                                    Customer System
+                                </strong>
+
+                                <span>
+                                    Customer management ready
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <span class="online">
+                            Ready
+                        </span>
+
+                    </div>
+
+
                 </div>
 
             </div>
@@ -549,12 +632,21 @@
         </section>
 
 
+
+        <!-- ==============================
+             FOOTER
+        =============================== -->
+
         <footer class="dashboard-footer">
 
             Restaurant Billing System
+
             <span>•</span>
+
             Admin Dashboard
+
             <span>•</span>
+
             2026
 
         </footer>
@@ -565,6 +657,10 @@
 </div>
 
 
+
+<!-- ==============================
+     CURRENT DATE
+=============================== -->
 
 <script>
 
@@ -588,4 +684,3 @@
 </body>
 
 </html>
-```

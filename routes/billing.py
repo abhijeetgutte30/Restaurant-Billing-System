@@ -2,15 +2,15 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required
 
 from database.database import db
-from models.models import Menu, Bill, BillItem
+from models.models import Menu, Bill, BillItem, Customer
 
 
 billing = Blueprint("billing", __name__)
 
 
-# ==========================================
+# =========================================================
 # BILLING PAGE
-# ==========================================
+# =========================================================
 
 @billing.route("/billing")
 @login_required
@@ -24,15 +24,19 @@ def billing_page():
     )
 
 
-# ==========================================
-# SAVE / GENERATE BILL
-# ==========================================
+# =========================================================
+# GENERATE BILL
+# =========================================================
 
 @billing.route("/billing/generate", methods=["POST"])
 @login_required
 def generate_bill():
 
     try:
+
+        # -------------------------------------------------
+        # GET DATA FROM FRONTEND
+        # -------------------------------------------------
 
         data = request.get_json()
 
@@ -43,6 +47,10 @@ def generate_bill():
             }), 400
 
 
+        # -------------------------------------------------
+        # CART ITEMS
+        # -------------------------------------------------
+
         items = data.get("items", [])
 
         if not items:
@@ -52,24 +60,80 @@ def generate_bill():
             }), 400
 
 
-        # --------------------------------------
-        # BILL VALUES
-        # --------------------------------------
+        # -------------------------------------------------
+        # CUSTOMER DETAILS
+        # -------------------------------------------------
 
-        subtotal = float(data.get("subtotal", 0))
-        gst = float(data.get("gst", 0))
-        discount = float(data.get("discount", 0))
-        grand_total = float(data.get("grand_total", 0))
+        customer_name = str(
+            data.get("customer_name", "")
+        ).strip()
+
+        mobile = str(
+            data.get("mobile", "")
+        ).strip()
+
+        table_no = str(
+            data.get("table_no", "")
+        ).strip()
+
+
+        # -------------------------------------------------
+        # VALIDATE CUSTOMER DETAILS
+        # -------------------------------------------------
+
+        if not customer_name:
+
+            return jsonify({
+                "success": False,
+                "message": "Please enter customer name."
+            }), 400
+
+
+        if not mobile:
+
+            return jsonify({
+                "success": False,
+                "message": "Please enter mobile number."
+            }), 400
+
+
+        if not table_no:
+
+            return jsonify({
+                "success": False,
+                "message": "Please enter table number."
+            }), 400
+
+
+        # -------------------------------------------------
+        # BILL AMOUNTS
+        # -------------------------------------------------
+
+        subtotal = float(
+            data.get("subtotal", 0)
+        )
+
+        gst = float(
+            data.get("gst", 0)
+        )
+
+        discount = float(
+            data.get("discount", 0)
+        )
+
+        grand_total = float(
+            data.get("grand_total", 0)
+        )
+
+
+        # -------------------------------------------------
+        # PAYMENT METHOD
+        # -------------------------------------------------
 
         payment_method = data.get(
             "payment_method",
             "Cash"
         )
-
-
-        # --------------------------------------
-        # VALIDATE PAYMENT METHOD
-        # --------------------------------------
 
         allowed_payment_methods = [
             "Cash",
@@ -82,16 +146,15 @@ def generate_bill():
             payment_method = "Cash"
 
 
-        # --------------------------------------
+        # -------------------------------------------------
         # GENERATE INVOICE NUMBER
-        # --------------------------------------
+        # -------------------------------------------------
 
         last_bill = (
             Bill.query
             .order_by(Bill.id.desc())
             .first()
         )
-
 
         if last_bill:
 
@@ -107,9 +170,9 @@ def generate_bill():
         )
 
 
-        # --------------------------------------
+        # -------------------------------------------------
         # CREATE BILL
-        # --------------------------------------
+        # -------------------------------------------------
 
         new_bill = Bill(
 
@@ -124,18 +187,18 @@ def generate_bill():
             grand_total=grand_total,
 
             payment_method=payment_method
-
         )
 
 
         db.session.add(new_bill)
 
+        # Get new bill ID before creating items/customer
         db.session.flush()
 
 
-        # --------------------------------------
-        # SAVE BILL ITEMS
-        # --------------------------------------
+        # -------------------------------------------------
+        # CREATE BILL ITEMS
+        # -------------------------------------------------
 
         for item in items:
 
@@ -152,7 +215,6 @@ def generate_bill():
 
 
             if not menu_item:
-
                 continue
 
 
@@ -179,22 +241,45 @@ def generate_bill():
                 quantity=quantity,
 
                 total=item_total
-
             )
 
 
-            db.session.add(bill_item)
+            db.session.add(
+                bill_item
+            )
 
 
-        # --------------------------------------
+        # -------------------------------------------------
+        # CREATE CUSTOMER
+        # -------------------------------------------------
+
+        new_customer = Customer(
+
+            name=customer_name,
+
+            mobile=mobile,
+
+            table_no=table_no,
+
+            bill_id=new_bill.id
+        )
+
+
+        db.session.add(
+            new_customer
+        )
+
+
+        # -------------------------------------------------
         # SAVE EVERYTHING
-        # --------------------------------------
+        # -------------------------------------------------
 
         db.session.commit()
 
 
-        print("INVOICE DEBUG:", invoice_number, grand_total, payment_method)
-
+        # -------------------------------------------------
+        # SUCCESS RESPONSE
+        # -------------------------------------------------
 
         return jsonify({
 
@@ -206,10 +291,19 @@ def generate_bill():
 
             "total": grand_total,
 
-            "payment_method": payment_method
+            "payment_method": payment_method,
 
+            "customer_name": customer_name,
+
+            "mobile": mobile,
+
+            "table_no": table_no
         })
 
+
+    # =====================================================
+    # ERROR HANDLING
+    # =====================================================
 
     except Exception as e:
 
@@ -220,11 +314,9 @@ def generate_bill():
             e
         )
 
-
         return jsonify({
 
             "success": False,
 
             "message": "Unable to generate bill."
-
         }), 500

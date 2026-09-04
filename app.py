@@ -3,36 +3,70 @@ from flask_login import login_required
 
 from config import Config, bcrypt, login_manager
 from database.database import db
+
 from routes.auth import auth
 from routes.menu import menu
 from routes.billing import billing
-from models.models import Admin, Menu
+from routes.customers import customers
+
+from models.models import Admin, Menu, Customer, Bill
+
 
 app = Flask(__name__)
+
 app.config.from_object(Config)
 
-# Initialize Extensions
+
+# =========================================================
+# INITIALIZE EXTENSIONS
+# =========================================================
+
 db.init_app(app)
+
 bcrypt.init_app(app)
+
 login_manager.init_app(app)
 
-# Register Blueprints
+
+# =========================================================
+# REGISTER BLUEPRINTS
+# =========================================================
+
 app.register_blueprint(auth)
+
 app.register_blueprint(menu)
+
 app.register_blueprint(billing)
 
+app.register_blueprint(customers)
 
-# Create Database & Default Admin
+
+# =========================================================
+# CREATE DATABASE & DEFAULT ADMIN
+# =========================================================
+
 with app.app_context():
+
     db.create_all()
 
-    admin = Admin.query.filter_by(username="admin").first()
+    admin = Admin.query.filter_by(
+        username="admin"
+    ).first()
 
     if admin is None:
-        admin = Admin(username="admin")
-        admin.set_password("admin123")
+
+        admin = Admin(
+            username="admin"
+        )
+
+        admin.set_password(
+            "admin123"
+        )
+
         db.session.add(admin)
+
         db.session.commit()
+
         print("Default Admin Created")
 
 
@@ -42,6 +76,7 @@ with app.app_context():
 
 @app.route("/")
 def home():
+
     return """
 <!DOCTYPE html>
 <html lang="en">
@@ -49,9 +84,14 @@ def home():
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Restaurant Billing System | Abhijeet Gutte</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Restaurant Billing System | Abhijeet Gutte
+    </title>
+
 
     <style>
 
@@ -61,271 +101,467 @@ def home():
             box-sizing: border-box;
         }
 
+
         html {
             scroll-behavior: smooth;
         }
 
+
         body {
-            font-family: Arial, Helvetica, sans-serif;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
             background: #0b0b0d;
+
             color: white;
+
             overflow-x: hidden;
         }
+
 
         /* ================= NAVBAR ================= */
 
         nav {
+
             position: fixed;
+
             top: 0;
             left: 0;
+
             width: 100%;
             height: 76px;
 
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
 
             padding: 0 7%;
 
-            background: rgba(10, 10, 12, 0.75);
-            backdrop-filter: blur(18px);
+            background:
+                rgba(10, 10, 12, 0.75);
 
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter:
+                blur(18px);
+
+            border-bottom:
+                1px solid rgba(255,255,255,0.08);
 
             z-index: 1000;
         }
 
+
         .logo {
+
             font-size: 22px;
+
             font-weight: 800;
+
             letter-spacing: 1px;
         }
 
+
         .logo span {
+
             color: #f5a623;
         }
 
+
         .nav-links {
+
             display: flex;
+
             align-items: center;
+
             gap: 30px;
         }
 
+
         .nav-links a {
+
             color: #ddd;
+
             text-decoration: none;
+
             font-size: 14px;
+
             transition: 0.3s;
         }
 
+
         .nav-links a:hover {
+
             color: #f5a623;
         }
 
+
         .nav-login {
-            padding: 11px 23px;
-            border-radius: 30px;
-            background: #f5a623;
-            color: #111 !important;
-            font-weight: 700;
+
+            padding:
+                11px 23px;
+
+            border-radius:
+                30px;
+
+            background:
+                #f5a623;
+
+            color:
+                #111 !important;
+
+            font-weight:
+                700;
         }
 
+
         .nav-login:hover {
-            background: #ffc45c;
-            transform: translateY(-2px);
+
+            background:
+                #ffc45c;
+
+            transform:
+                translateY(-2px);
         }
 
 
         /* ================= HERO ================= */
 
         .hero {
-            min-height: 100vh;
 
-            display: flex;
-            align-items: center;
+            min-height:
+                100vh;
 
-            padding: 120px 7% 70px;
+            display:
+                flex;
 
-            position: relative;
-            overflow: hidden;
+            align-items:
+                center;
+
+            padding:
+                120px 7% 70px;
+
+            position:
+                relative;
+
+            overflow:
+                hidden;
 
             background:
+
                 radial-gradient(
                     circle at 75% 45%,
                     rgba(245,166,35,0.18),
                     transparent 30%
                 ),
+
                 radial-gradient(
                     circle at 90% 10%,
                     rgba(180,60,40,0.14),
                     transparent 30%
                 ),
+
                 #0b0b0d;
         }
 
+
         .hero-content {
+
             width: 55%;
-            position: relative;
+
+            position:
+                relative;
+
             z-index: 3;
         }
 
+
         .badge {
-            display: inline-block;
 
-            padding: 8px 16px;
-            border-radius: 30px;
+            display:
+                inline-block;
 
-            background: rgba(245,166,35,0.10);
-            border: 1px solid rgba(245,166,35,0.35);
+            padding:
+                8px 16px;
 
-            color: #f5a623;
+            border-radius:
+                30px;
 
-            font-size: 13px;
-            font-weight: 600;
+            background:
+                rgba(245,166,35,0.10);
 
-            margin-bottom: 22px;
+            border:
+                1px solid
+                rgba(245,166,35,0.35);
+
+            color:
+                #f5a623;
+
+            font-size:
+                13px;
+
+            font-weight:
+                600;
+
+            margin-bottom:
+                22px;
         }
+
 
         .hero h1 {
-            font-size: clamp(48px, 6vw, 82px);
-            line-height: 1.03;
-            letter-spacing: -3px;
 
-            margin-bottom: 25px;
+            font-size:
+                clamp(48px, 6vw, 82px);
+
+            line-height:
+                1.03;
+
+            letter-spacing:
+                -3px;
+
+            margin-bottom:
+                25px;
         }
+
 
         .hero h1 span {
-            color: #f5a623;
+
+            color:
+                #f5a623;
         }
+
 
         .hero p {
-            color: #a7a7ad;
-            font-size: 18px;
-            line-height: 1.7;
 
-            max-width: 600px;
+            color:
+                #a7a7ad;
 
-            margin-bottom: 35px;
+            font-size:
+                18px;
+
+            line-height:
+                1.7;
+
+            max-width:
+                600px;
+
+            margin-bottom:
+                35px;
         }
+
 
         .hero-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+
+            display:
+                flex;
+
+            gap:
+                15px;
+
+            flex-wrap:
+                wrap;
         }
+
 
         .primary-btn {
-            display: inline-block;
 
-            padding: 15px 30px;
+            display:
+                inline-block;
 
-            border-radius: 10px;
+            padding:
+                15px 30px;
 
-            background: #f5a623;
-            color: #111;
+            border-radius:
+                10px;
 
-            text-decoration: none;
-            font-weight: 800;
+            background:
+                #f5a623;
 
-            transition: 0.3s;
+            color:
+                #111;
 
-            box-shadow: 0 10px 30px rgba(245,166,35,0.18);
+            text-decoration:
+                none;
+
+            font-weight:
+                800;
+
+            transition:
+                0.3s;
+
+            box-shadow:
+                0 10px 30px
+                rgba(245,166,35,0.18);
         }
+
 
         .primary-btn:hover {
-            transform: translateY(-4px);
-            background: #ffc45c;
+
+            transform:
+                translateY(-4px);
+
+            background:
+                #ffc45c;
         }
+
 
         .secondary-btn {
-            display: inline-block;
 
-            padding: 15px 30px;
+            display:
+                inline-block;
 
-            border-radius: 10px;
+            padding:
+                15px 30px;
 
-            border: 1px solid rgba(255,255,255,0.15);
+            border-radius:
+                10px;
 
-            color: white;
+            border:
+                1px solid
+                rgba(255,255,255,0.15);
 
-            text-decoration: none;
-            font-weight: 600;
+            color:
+                white;
 
-            transition: 0.3s;
+            text-decoration:
+                none;
+
+            font-weight:
+                600;
+
+            transition:
+                0.3s;
         }
 
+
         .secondary-btn:hover {
-            background: rgba(255,255,255,0.06);
-            transform: translateY(-4px);
+
+            background:
+                rgba(255,255,255,0.06);
+
+            transform:
+                translateY(-4px);
         }
 
 
         /* ================= HERO VISUAL ================= */
 
         .hero-visual {
-            position: absolute;
 
-            right: 4%;
-            top: 18%;
+            position:
+                absolute;
 
-            width: 40%;
-            height: 65%;
+            right:
+                4%;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            top:
+                18%;
+
+            width:
+                40%;
+
+            height:
+                65%;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
         }
 
+
         .restaurant-card {
-            width: 440px;
-            max-width: 90%;
 
-            height: 500px;
+            width:
+                440px;
 
-            border-radius: 28px;
+            max-width:
+                90%;
 
-            position: relative;
+            height:
+                500px;
 
-            overflow: hidden;
+            border-radius:
+                28px;
+
+            position:
+                relative;
+
+            overflow:
+                hidden;
 
             background:
+
                 linear-gradient(
                     145deg,
                     rgba(255,255,255,0.10),
                     rgba(255,255,255,0.025)
                 );
 
-            border: 1px solid rgba(255,255,255,0.12);
+            border:
+                1px solid
+                rgba(255,255,255,0.12);
 
             box-shadow:
-                0 40px 100px rgba(0,0,0,0.55),
-                inset 0 1px 0 rgba(255,255,255,0.08);
 
-            transform: rotate(3deg);
+                0 40px 100px
+                rgba(0,0,0,0.55),
 
-            animation: floatCard 5s ease-in-out infinite;
+                inset 0 1px 0
+                rgba(255,255,255,0.08);
+
+            transform:
+                rotate(3deg);
+
+            animation:
+                floatCard 5s ease-in-out infinite;
         }
 
+
         @keyframes floatCard {
+
             0%, 100% {
-                transform: rotate(3deg) translateY(0);
+
+                transform:
+                    rotate(3deg)
+                    translateY(0);
             }
 
             50% {
-                transform: rotate(1deg) translateY(-15px);
+
+                transform:
+                    rotate(1deg)
+                    translateY(-15px);
             }
         }
 
+
         .food-scene {
-            height: 60%;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height:
+                60%;
 
-            font-size: 130px;
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            font-size:
+                130px;
 
             background:
+
                 radial-gradient(
                     circle,
                     rgba(245,166,35,0.30),
@@ -333,185 +569,318 @@ def home():
                 );
         }
 
+
         .dashboard-preview {
-            position: absolute;
 
-            bottom: 0;
-            left: 0;
+            position:
+                absolute;
 
-            width: 100%;
+            bottom:
+                0;
 
-            padding: 25px;
+            left:
+                0;
 
-            background: rgba(10,10,12,0.92);
+            width:
+                100%;
 
-            border-top: 1px solid rgba(255,255,255,0.08);
+            padding:
+                25px;
+
+            background:
+                rgba(10,10,12,0.92);
+
+            border-top:
+                1px solid
+                rgba(255,255,255,0.08);
         }
+
 
         .preview-title {
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 8px;
+
+            font-size:
+                12px;
+
+            color:
+                #888;
+
+            margin-bottom:
+                8px;
         }
+
 
         .preview-total {
-            font-size: 30px;
-            font-weight: 800;
+
+            font-size:
+                30px;
+
+            font-weight:
+                800;
         }
+
 
         .preview-total span {
-            color: #f5a623;
+
+            color:
+                #f5a623;
         }
+
 
         .preview-line {
-            height: 1px;
-            background: rgba(255,255,255,0.08);
-            margin: 15px 0;
+
+            height:
+                1px;
+
+            background:
+                rgba(255,255,255,0.08);
+
+            margin:
+                15px 0;
         }
 
-        .preview-row {
-            display: flex;
-            justify-content: space-between;
 
-            color: #aaa;
-            font-size: 13px;
+        .preview-row {
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            color:
+                #aaa;
+
+            font-size:
+                13px;
         }
 
 
         /* ================= SLIDER ================= */
 
         .slider {
-            margin-top: 45px;
 
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-top:
+                45px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
         }
+
 
         .dot {
-            width: 8px;
-            height: 8px;
 
-            border-radius: 50%;
+            width:
+                8px;
 
-            background: #555;
+            height:
+                8px;
+
+            border-radius:
+                50%;
+
+            background:
+                #555;
         }
 
+
         .dot.active {
-            width: 28px;
-            border-radius: 20px;
-            background: #f5a623;
+
+            width:
+                28px;
+
+            border-radius:
+                20px;
+
+            background:
+                #f5a623;
         }
 
 
         /* ================= SECTION ================= */
 
         .section {
-            padding: 110px 7%;
+
+            padding:
+                110px 7%;
         }
+
 
         .section-header {
-            text-align: center;
-            max-width: 700px;
 
-            margin: auto auto 65px;
+            text-align:
+                center;
+
+            max-width:
+                700px;
+
+            margin:
+                auto auto 65px;
         }
+
 
         .section-label {
-            color: #f5a623;
-            font-size: 13px;
-            font-weight: 800;
 
-            letter-spacing: 2px;
+            color:
+                #f5a623;
 
-            text-transform: uppercase;
+            font-size:
+                13px;
 
-            margin-bottom: 15px;
+            font-weight:
+                800;
+
+            letter-spacing:
+                2px;
+
+            text-transform:
+                uppercase;
+
+            margin-bottom:
+                15px;
         }
+
 
         .section h2 {
-            font-size: clamp(35px, 4vw, 55px);
-            margin-bottom: 18px;
+
+            font-size:
+                clamp(35px, 4vw, 55px);
+
+            margin-bottom:
+                18px;
         }
 
+
         .section-header p {
-            color: #85858c;
-            line-height: 1.7;
+
+            color:
+                #85858c;
+
+            line-height:
+                1.7;
         }
 
 
         /* ================= FEATURES ================= */
 
         .features {
-            display: grid;
+
+            display:
+                grid;
 
             grid-template-columns:
                 repeat(4, 1fr);
 
-            gap: 20px;
+            gap:
+                20px;
         }
+
 
         .feature {
-            padding: 32px;
 
-            min-height: 230px;
+            padding:
+                32px;
 
-            border-radius: 20px;
+            min-height:
+                230px;
 
-            background: #111114;
+            border-radius:
+                20px;
 
-            border: 1px solid rgba(255,255,255,0.07);
+            background:
+                #111114;
 
-            transition: 0.35s;
+            border:
+                1px solid
+                rgba(255,255,255,0.07);
+
+            transition:
+                0.35s;
         }
 
+
         .feature:hover {
-            transform: translateY(-8px);
+
+            transform:
+                translateY(-8px);
 
             border-color:
                 rgba(245,166,35,0.35);
 
             box-shadow:
-                0 20px 50px rgba(0,0,0,0.3);
+                0 20px 50px
+                rgba(0,0,0,0.3);
         }
 
+
         .feature-icon {
-            width: 55px;
-            height: 55px;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width:
+                55px;
 
-            border-radius: 15px;
+            height:
+                55px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                15px;
 
             background:
                 rgba(245,166,35,0.12);
 
-            font-size: 25px;
+            font-size:
+                25px;
 
-            margin-bottom: 25px;
+            margin-bottom:
+                25px;
         }
+
 
         .feature h3 {
-            margin-bottom: 12px;
+
+            margin-bottom:
+                12px;
         }
 
+
         .feature p {
-            color: #85858c;
-            line-height: 1.6;
-            font-size: 14px;
+
+            color:
+                #85858c;
+
+            line-height:
+                1.6;
+
+            font-size:
+                14px;
         }
 
 
         /* ================= QUOTE ================= */
 
         .quote-section {
-            padding: 100px 7%;
 
-            text-align: center;
+            padding:
+                100px 7%;
+
+            text-align:
+                center;
 
             background:
+
                 linear-gradient(
                     135deg,
                     #15120d,
@@ -519,110 +888,182 @@ def home():
                 );
         }
 
+
         .quote {
-            max-width: 900px;
-            margin: auto;
 
-            font-size: clamp(28px, 4vw, 50px);
+            max-width:
+                900px;
 
-            line-height: 1.25;
-            font-weight: 700;
+            margin:
+                auto;
+
+            font-size:
+                clamp(28px, 4vw, 50px);
+
+            line-height:
+                1.25;
+
+            font-weight:
+                700;
         }
 
+
         .quote span {
-            color: #f5a623;
+
+            color:
+                #f5a623;
         }
 
 
         /* ================= ABOUT ================= */
 
         .about {
-            display: grid;
 
-            grid-template-columns: 1fr 1fr;
+            display:
+                grid;
 
-            gap: 70px;
+            grid-template-columns:
+                1fr 1fr;
 
-            align-items: center;
+            gap:
+                70px;
+
+            align-items:
+                center;
         }
+
 
         .about-box {
-            padding: 40px;
 
-            border-radius: 25px;
+            padding:
+                40px;
 
-            background: #111114;
+            border-radius:
+                25px;
 
-            border: 1px solid rgba(255,255,255,0.08);
+            background:
+                #111114;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.08);
         }
+
 
         .about-box h3 {
-            font-size: 27px;
-            margin-bottom: 20px;
+
+            font-size:
+                27px;
+
+            margin-bottom:
+                20px;
         }
+
 
         .about-box p {
-            color: #909097;
-            line-height: 1.8;
+
+            color:
+                #909097;
+
+            line-height:
+                1.8;
         }
 
+
         .creator {
-            color: #f5a623;
-            font-weight: 800;
+
+            color:
+                #f5a623;
+
+            font-weight:
+                800;
         }
 
 
         /* ================= CTA ================= */
 
         .cta {
-            margin: 0 7% 100px;
 
-            padding: 75px 50px;
+            margin:
+                0 7% 100px;
 
-            text-align: center;
+            padding:
+                75px 50px;
 
-            border-radius: 30px;
+            text-align:
+                center;
+
+            border-radius:
+                30px;
 
             background:
+
                 radial-gradient(
                     circle at center,
                     rgba(245,166,35,0.16),
                     transparent 60%
                 ),
+
                 #111114;
 
-            border: 1px solid rgba(245,166,35,0.18);
+            border:
+                1px solid
+                rgba(245,166,35,0.18);
         }
+
 
         .cta h2 {
-            font-size: clamp(32px, 4vw, 52px);
 
-            margin-bottom: 18px;
+            font-size:
+                clamp(32px, 4vw, 52px);
+
+            margin-bottom:
+                18px;
         }
 
+
         .cta p {
-            color: #888;
-            margin-bottom: 30px;
+
+            color:
+                #888;
+
+            margin-bottom:
+                30px;
         }
 
 
         /* ================= FOOTER ================= */
 
         footer {
-            padding: 35px 7%;
 
-            border-top: 1px solid rgba(255,255,255,0.07);
+            padding:
+                35px 7%;
 
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-top:
+                1px solid
+                rgba(255,255,255,0.07);
 
-            color: #666;
-            font-size: 13px;
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            color:
+                #666;
+
+            font-size:
+                13px;
         }
 
+
         footer strong {
-            color: #aaa;
+
+            color:
+                #aaa;
         }
 
 
@@ -631,25 +1072,40 @@ def home():
         @media(max-width: 1000px) {
 
             .hero-content {
-                width: 100%;
+
+                width:
+                    100%;
             }
+
 
             .hero-visual {
-                opacity: 0.22;
-                width: 70%;
+
+                opacity:
+                    0.22;
+
+                width:
+                    70%;
             }
 
+
             .features {
+
                 grid-template-columns:
                     repeat(2, 1fr);
             }
 
+
             .about {
-                grid-template-columns: 1fr;
+
+                grid-template-columns:
+                    1fr;
             }
 
+
             .nav-links a:not(.nav-login) {
-                display: none;
+
+                display:
+                    none;
             }
         }
 
@@ -657,45 +1113,83 @@ def home():
         @media(max-width: 600px) {
 
             nav {
-                padding: 0 5%;
+
+                padding:
+                    0 5%;
             }
+
 
             .hero {
-                padding-left: 5%;
-                padding-right: 5%;
+
+                padding-left:
+                    5%;
+
+                padding-right:
+                    5%;
             }
+
 
             .hero h1 {
-                letter-spacing: -2px;
+
+                letter-spacing:
+                    -2px;
             }
+
 
             .hero p {
-                font-size: 16px;
+
+                font-size:
+                    16px;
             }
+
 
             .hero-visual {
-                right: -15%;
-                width: 100%;
+
+                right:
+                    -15%;
+
+                width:
+                    100%;
             }
+
 
             .features {
-                grid-template-columns: 1fr;
+
+                grid-template-columns:
+                    1fr;
             }
+
 
             .section {
-                padding: 80px 5%;
+
+                padding:
+                    80px 5%;
             }
+
 
             .cta {
-                margin-left: 5%;
-                margin-right: 5%;
-                padding: 55px 25px;
+
+                margin-left:
+                    5%;
+
+                margin-right:
+                    5%;
+
+                padding:
+                    55px 25px;
             }
 
+
             footer {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
+
+                flex-direction:
+                    column;
+
+                gap:
+                    10px;
+
+                text-align:
+                    center;
             }
 
         }
@@ -713,19 +1207,28 @@ def home():
 <nav>
 
     <div class="logo">
+
         Resto<span>Bill</span>
+
     </div>
+
 
     <div class="nav-links">
 
-        <a href="#features">Features</a>
+        <a href="#features">
+            Features
+        </a>
 
-        <a href="#about">About</a>
+        <a href="#about">
+            About
+        </a>
 
         <a
             href="/login"
             class="nav-login">
+
             Login
+
         </a>
 
     </div>
@@ -737,88 +1240,147 @@ def home():
 
 <section class="hero">
 
+
     <div class="hero-content">
 
+
         <div class="badge">
+
             RESTAURANT MANAGEMENT SYSTEM
+
         </div>
 
+
         <h1>
+
             Manage your restaurant.
+
             <br>
-            <span>Smarter.</span>
+
+            <span>
+                Smarter.
+            </span>
+
         </h1>
 
+
         <p>
+
             A modern restaurant billing and management
             system designed to make billing faster,
             inventory easier and daily operations smoother.
+
         </p>
 
+
         <div class="hero-buttons">
+
 
             <a
                 href="/login"
                 class="primary-btn">
+
                 Get Started →
+
             </a>
+
 
             <a
                 href="#features"
                 class="secondary-btn">
+
                 Explore System
+
             </a>
 
+
         </div>
+
 
         <div class="slider">
 
             <div class="dot active"></div>
+
             <div class="dot"></div>
+
             <div class="dot"></div>
 
         </div>
+
 
     </div>
 
 
     <div class="hero-visual">
 
+
         <div class="restaurant-card">
 
+
             <div class="food-scene">
+
                 🍕
+
             </div>
+
 
             <div class="dashboard-preview">
 
+
                 <div class="preview-title">
+
                     TODAY'S SALES
+
                 </div>
 
+
                 <div class="preview-total">
+
                     ₹<span>24,850</span>
+
                 </div>
+
 
                 <div class="preview-line"></div>
 
+
                 <div class="preview-row">
-                    <span>Bills Generated</span>
-                    <span>128</span>
+
+                    <span>
+                        Bills Generated
+                    </span>
+
+                    <span>
+                        128
+                    </span>
+
                 </div>
+
 
                 <br>
 
+
                 <div class="preview-row">
-                    <span>Orders</span>
-                    <span>156</span>
+
+                    <span>
+                        Orders
+                    </span>
+
+                    <span>
+                        156
+                    </span>
+
                 </div>
+
 
             </div>
 
+
         </div>
 
+
     </div>
+
 
 </section>
 
@@ -829,23 +1391,36 @@ def home():
     class="section"
     id="features">
 
+
     <div class="section-header">
 
+
         <div class="section-label">
+
             Everything You Need
+
         </div>
 
+
         <h2>
+
             One system.
+
             <br>
+
             Complete control.
+
         </h2>
 
+
         <p>
+
             From taking an order to generating an invoice,
             manage your restaurant operations from one
             simple dashboard.
+
         </p>
+
 
     </div>
 
@@ -855,79 +1430,120 @@ def home():
 
         <div class="feature">
 
+
             <div class="feature-icon">
+
                 🧾
+
             </div>
 
+
             <h3>
+
                 Smart Billing
+
             </h3>
 
+
             <p>
+
                 Generate accurate bills and invoices
                 quickly with an easy-to-use billing
                 interface.
+
             </p>
+
 
         </div>
 
 
         <div class="feature">
 
+
             <div class="feature-icon">
+
                 👥
+
             </div>
 
+
             <h3>
+
                 Customers
+
             </h3>
 
+
             <p>
+
                 Keep customer information organized
                 and make restaurant management easier.
+
             </p>
+
 
         </div>
 
 
         <div class="feature">
 
+
             <div class="feature-icon">
+
                 📦
+
             </div>
 
+
             <h3>
+
                 Inventory
+
             </h3>
 
+
             <p>
+
                 Keep track of menu items, pricing and
                 inventory from one centralized system.
+
             </p>
+
 
         </div>
 
 
         <div class="feature">
 
+
             <div class="feature-icon">
+
                 📊
+
             </div>
 
+
             <h3>
+
                 Reports
+
             </h3>
 
+
             <p>
+
                 Turn restaurant activity into useful
                 insights and understand your business
                 better.
+
             </p>
+
 
         </div>
 
 
     </div>
+
 
 </section>
 
@@ -936,14 +1552,19 @@ def home():
 
 <section class="quote-section">
 
+
     <div class="quote">
 
         "Good restaurants create great food.
+
         <br>
 
-        <span>Great systems create great restaurants.</span>"
+        <span>
+            Great systems create great restaurants.
+        </span>"
 
     </div>
+
 
 </section>
 
@@ -954,18 +1575,26 @@ def home():
     class="section"
     id="about">
 
+
     <div class="about">
 
 
         <div>
 
+
             <div class="section-label">
+
                 About The Project
+
             </div>
 
+
             <h2>
+
                 Built with a simple idea.
+
             </h2>
+
 
             <p style="
                 color:#888;
@@ -983,14 +1612,19 @@ def home():
 
             </p>
 
+
         </div>
 
 
         <div class="about-box">
 
+
             <h3>
+
                 Crafted with passion.
+
             </h3>
+
 
             <p>
 
@@ -998,7 +1632,9 @@ def home():
                 software project developed by
 
                 <span class="creator">
+
                     Abhijeet Gutte
+
                 </span>.
 
                 <br><br>
@@ -1009,10 +1645,12 @@ def home():
 
             </p>
 
+
         </div>
 
 
     </div>
+
 
 </section>
 
@@ -1021,19 +1659,29 @@ def home():
 
 <section class="cta">
 
+
     <h2>
+
         Ready to manage smarter?
+
     </h2>
 
+
     <p>
+
         Step into your restaurant management dashboard.
+
     </p>
+
 
     <a
         href="/login"
         class="primary-btn">
+
         Login to Dashboard →
+
     </a>
+
 
 </section>
 
@@ -1042,15 +1690,28 @@ def home():
 
 <footer>
 
-    <div>
-        © 2026
-        <strong>RestoBill</strong>
-    </div>
 
     <div>
-        Designed & Developed by
-        <strong>Abhijeet Gutte</strong>
+
+        © 2026
+
+        <strong>
+            RestoBill
+        </strong>
+
     </div>
+
+
+    <div>
+
+        Designed & Developed by
+
+        <strong>
+            Abhijeet Gutte
+        </strong>
+
+    </div>
+
 
 </footer>
 
@@ -1059,23 +1720,34 @@ def home():
 
 <script>
 
-    const dots = document.querySelectorAll(".dot");
+    const dots =
+        document.querySelectorAll(".dot");
 
     let currentSlide = 0;
+
 
     setInterval(function() {
 
         dots.forEach(function(dot) {
+
             dot.classList.remove("active");
+
         });
+
 
         currentSlide++;
 
+
         if (currentSlide >= dots.length) {
+
             currentSlide = 0;
+
         }
 
-        dots[currentSlide].classList.add("active");
+
+        dots[currentSlide]
+            .classList.add("active");
+
 
     }, 2500);
 
@@ -1096,11 +1768,26 @@ def home():
 @login_required
 def dashboard():
 
+    # Total menu items
     total_menu = Menu.query.count()
+
+
+    # Total customers
+    total_customers = Customer.query.count()
+
+
+    # Total orders / bills
+    total_orders = Bill.query.count()
+
 
     return render_template(
         "dashboard.html",
-        total_menu=total_menu
+
+        total_menu=total_menu,
+
+        total_customers=total_customers,
+
+        total_orders=total_orders
     )
 
 
@@ -1109,5 +1796,5 @@ def dashboard():
 # =========================================================
 
 if __name__ == "__main__":
-    app.run(debug=True)
 
+    app.run(debug=True)

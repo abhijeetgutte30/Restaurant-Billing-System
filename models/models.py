@@ -11,7 +11,10 @@ class Admin(UserMixin, db.Model):
 
     __tablename__ = "admins"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     username = db.Column(
         db.String(100),
@@ -127,6 +130,14 @@ class Bill(db.Model):
         cascade="all, delete-orphan"
     )
 
+    # Relationship with Customer
+    customer = db.relationship(
+        "Customer",
+        backref="bill",
+        uselist=False,
+        cascade="all, delete-orphan"
+    )
+
 
 # ==========================================
 # BILL ITEM MODEL
@@ -171,6 +182,47 @@ class BillItem(db.Model):
     total = db.Column(
         db.Float,
         nullable=False
+    )
+
+
+# ==========================================
+# CUSTOMER MODEL
+# ==========================================
+
+class Customer(db.Model):
+
+    __tablename__ = "customers"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    mobile = db.Column(
+        db.String(15),
+        nullable=False
+    )
+
+    table_no = db.Column(
+        db.String(20),
+        nullable=False
+    )
+
+    bill_id = db.Column(
+        db.Integer,
+        db.ForeignKey("bills.id"),
+        nullable=True,
+        unique=True
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=db.func.now()
     )
 
 

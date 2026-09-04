@@ -1,0 +1,932 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Customers | RestoBill</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .customers-container {
+            padding: 30px 35px 40px;
+        }
+
+        .customers-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .customers-heading h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .customers-heading p {
+            margin-top: 7px;
+            color: #85858c;
+            font-size: 14px;
+        }
+
+        .new-bill-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 19px;
+            border-radius: 10px;
+            background: #f5a623;
+            color: #111;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 800;
+            transition: 0.25s;
+            box-shadow: 0 8px 25px rgba(245,166,35,0.14);
+        }
+
+        .new-bill-btn:hover {
+            background: #ffc45c;
+            transform: translateY(-2px);
+        }
+
+        .customer-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .customer-stat {
+            position: relative;
+            padding: 22px;
+            border-radius: 16px;
+            background: #111114;
+            border: 1px solid rgba(255,255,255,0.07);
+            overflow: hidden;
+            transition: 0.25s;
+        }
+
+        .customer-stat:hover {
+            transform: translateY(-3px);
+            border-color: rgba(245,166,35,0.22);
+        }
+
+        .customer-stat::after {
+            content: "";
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            right: -30px;
+            bottom: -40px;
+            border-radius: 50%;
+            background: rgba(245,166,35,0.07);
+        }
+
+        .stat-label {
+            color: #777;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .stat-number {
+            margin-top: 9px;
+            color: white;
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        .stat-number span {
+            color: #f5a623;
+        }
+
+        .stat-description {
+            margin-top: 5px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .customer-panel {
+            background: #111114;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.18);
+        }
+
+        .panel-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 23px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .panel-title h3 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .panel-title p {
+            margin-top: 5px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .customer-count {
+            padding: 7px 11px;
+            border-radius: 8px;
+            background: rgba(245,166,35,0.09);
+            color: #f5a623;
+            border: 1px solid rgba(245,166,35,0.18);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .customers-table {
+            width: 100%;
+            min-width: 980px;
+            border-collapse: collapse;
+        }
+
+        .customers-table thead {
+            background: #0d0d0f;
+        }
+
+        .customers-table th {
+            padding: 14px 20px;
+            text-align: left;
+            color: #666;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .customers-table td {
+            padding: 17px 20px;
+            color: #cfcfd3;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.045);
+        }
+
+        .customers-table tbody tr {
+            transition: 0.2s;
+        }
+
+        .customers-table tbody tr:hover {
+            background: rgba(255,255,255,0.025);
+        }
+
+        .customers-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .customer-profile {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .customer-avatar {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(245,166,35,0.10);
+            color: #f5a623;
+            border: 1px solid rgba(245,166,35,0.15);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .customer-name {
+            color: white;
+            font-weight: 700;
+        }
+
+        .customer-id {
+            margin-top: 3px;
+            color: #555;
+            font-size: 10px;
+        }
+
+        .mobile-number {
+            color: #aaa;
+            font-family: Arial, sans-serif;
+        }
+
+        .table-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 7px;
+            background: rgba(245,166,35,0.08);
+            color: #f5a623;
+            border: 1px solid rgba(245,166,35,0.15);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .invoice-number {
+            color: #9bd79f;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .no-invoice {
+            color: #555;
+        }
+
+        .date-text {
+            color: #777;
+            font-size: 12px;
+        }
+
+        /* =====================================================
+           HISTORY BUTTON
+        ===================================================== */
+
+        .history-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 8px 13px;
+            border-radius: 8px;
+            background: rgba(245,166,35,0.08);
+            color: #f5a623;
+            border: 1px solid rgba(245,166,35,0.18);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 800;
+            transition: 0.25s;
+            white-space: nowrap;
+        }
+
+        .history-btn:hover {
+            background: #f5a623;
+            color: #111;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 18px rgba(245,166,35,0.15);
+        }
+
+        .empty-state {
+            padding: 75px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            background: rgba(245,166,35,0.08);
+            border: 1px solid rgba(245,166,35,0.13);
+            font-size: 27px;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 7px;
+            font-size: 18px;
+        }
+
+        .empty-state p {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+
+        .empty-btn {
+            display: inline-flex;
+            padding: 11px 17px;
+            border-radius: 9px;
+            background: #f5a623;
+            color: #111;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        @media(max-width: 900px) {
+
+            .customers-container {
+                padding: 25px 20px;
+            }
+
+            .customer-stats {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media(max-width: 600px) {
+
+            .customers-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="dashboard-wrapper">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ===================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                R
+            </div>
+
+            <div>
+
+                <h2>
+                    Restaurant
+                </h2>
+
+                <span>
+                    Billing System
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="menu-title">
+            MAIN MENU
+        </div>
+
+
+        <nav>
+
+            <a href="/dashboard"
+               class="nav-link">
+
+                <span class="nav-icon">
+                    ▦
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <a href="/menu"
+               class="nav-link">
+
+                <span class="nav-icon">
+                    ☰
+                </span>
+
+                <span>
+                    Menu
+                </span>
+
+            </a>
+
+
+            <a href="/billing"
+               class="nav-link">
+
+                <span class="nav-icon">
+                    ▤
+                </span>
+
+                <span>
+                    Billing
+                </span>
+
+            </a>
+
+
+            <a href="/customers"
+               class="nav-link active">
+
+                <span class="nav-icon">
+                    ♙
+                </span>
+
+                <span>
+                    Customers
+                </span>
+
+            </a>
+
+
+            <a href="#"
+               class="nav-link">
+
+                <span class="nav-icon">
+                    ▥
+                </span>
+
+                <span>
+                    Inventory
+                </span>
+
+            </a>
+
+
+            <a href="#"
+               class="nav-link">
+
+                <span class="nav-icon">
+                    ◴
+                </span>
+
+                <span>
+                    Reports
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="/logout"
+               class="logout-link">
+
+                <span>
+                    ↪
+                </span>
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ===================================================== -->
+
+    <main class="dashboard-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <p class="page-label">
+                    MANAGEMENT
+                </p>
+
+                <h1>
+                    Customers
+                </h1>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <div class="profile-avatar">
+                    A
+                </div>
+
+                <div class="profile-info">
+
+                    <strong>
+                        Admin
+                    </strong>
+
+                    <span>
+                        Administrator
+                    </span>
+
+                </div>
+
+                <span class="profile-arrow">
+                    ▾
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             CUSTOMERS CONTENT
+        ================================================= -->
+
+        <section class="customers-container">
+
+
+            <!-- PAGE HEADER -->
+
+            <div class="customers-header">
+
+                <div class="customers-heading">
+
+                    <h2>
+                        Customer Records
+                    </h2>
+
+                    <p>
+                        Manage customer details, tables
+                        and billing history.
+                    </p>
+
+                </div>
+
+
+                <a href="/billing"
+                   class="new-bill-btn">
+
+                    <span>
+                        +
+                    </span>
+
+                    New Bill
+
+                </a>
+
+            </div>
+
+
+            <!-- =================================================
+                 SUMMARY CARDS
+            ================================================= -->
+
+            <div class="customer-stats">
+
+
+                <div class="customer-stat">
+
+                    <div class="stat-label">
+                        TOTAL CUSTOMERS
+                    </div>
+
+                    <div class="stat-number">
+                        {{ customers|length }}
+                    </div>
+
+                    <div class="stat-description">
+                        Registered customer records
+                    </div>
+
+                </div>
+
+
+                <div class="customer-stat">
+
+                    <div class="stat-label">
+                        CUSTOMER DATABASE
+                    </div>
+
+                    <div class="stat-number">
+
+                        <span>
+                            Active
+                        </span>
+
+                    </div>
+
+                    <div class="stat-description">
+                        Customer management system
+                    </div>
+
+                </div>
+
+
+                <div class="customer-stat">
+
+                    <div class="stat-label">
+                        BILLING LINK
+                    </div>
+
+                    <div class="stat-number">
+
+                        <span>
+                            Connected
+                        </span>
+
+                    </div>
+
+                    <div class="stat-description">
+                        Customers linked with invoices
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 CUSTOMER TABLE
+            ================================================= -->
+
+            <div class="customer-panel">
+
+
+                <div class="panel-top">
+
+                    <div class="panel-title">
+
+                        <h3>
+                            All Customers
+                        </h3>
+
+                        <p>
+                            Latest customer records appear first.
+                        </p>
+
+                    </div>
+
+
+                    <div class="customer-count">
+
+                        {{ customers|length }}
+                        RECORDS
+
+                    </div>
+
+                </div>
+
+
+                {% if customers %}
+
+
+                <div class="table-scroll">
+
+                    <table class="customers-table">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Customer
+                                </th>
+
+                                <th>
+                                    Mobile
+                                </th>
+
+                                <th>
+                                    Table
+                                </th>
+
+                                <th>
+                                    Invoice
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                        {% for customer in customers %}
+
+                            <tr>
+
+
+                                <!-- CUSTOMER -->
+
+                                <td>
+
+                                    <div class="customer-profile">
+
+                                        <div class="customer-avatar">
+
+                                            {{ customer.name[0]|upper }}
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <div class="customer-name">
+
+                                                {{ customer.name }}
+
+                                            </div>
+
+
+                                            <div class="customer-id">
+
+                                                Customer #{{ customer.id }}
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- MOBILE -->
+
+                                <td>
+
+                                    <span class="mobile-number">
+
+                                        {{ customer.mobile }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- TABLE -->
+
+                                <td>
+
+                                    <span class="table-badge">
+
+                                        Table {{ customer.table_no }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- INVOICE -->
+
+                                <td>
+
+                                    {% if customer.bill %}
+
+                                        <span class="invoice-number">
+
+                                            {{ customer.bill.invoice_number }}
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="no-invoice">
+                                            —
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- DATE -->
+
+                                <td>
+
+                                    {% if customer.created_at %}
+
+                                        <span class="date-text">
+
+                                            {{ customer.created_at.strftime(
+                                                '%d %b %Y, %I:%M %p'
+                                            ) }}
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="no-invoice">
+                                            —
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- ACTION -->
+
+                                <td>
+
+                                    <a href="{{ url_for(
+                                        'customers.customer_history',
+                                        customer_id=customer.id
+                                    ) }}"
+                                       class="history-btn">
+
+                                        View History →
+
+                                    </a>
+
+                                </td>
+
+
+                            </tr>
+
+                        {% endfor %}
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                {% else %}
+
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================= -->
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        ♙
+                    </div>
+
+
+                    <h3>
+                        No Customers Yet
+                    </h3>
+
+
+                    <p>
+                        Generate your first bill to create
+                        a customer record.
+                    </p>
+
+
+                    <a href="/billing"
+                       class="empty-btn">
+
+                        Create First Bill →
+
+                    </a>
+
+                </div>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
+```

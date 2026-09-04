@@ -1,3 +1,4 @@
+```javascript
 // ==========================================
 // RESTAURANT BILLING SYSTEM
 // BILLING JAVASCRIPT
@@ -57,7 +58,6 @@ function updateCart() {
         return;
     }
 
-
     cartContainer.innerHTML = "";
 
 
@@ -93,17 +93,14 @@ function updateCart() {
 
     let itemCount = 0;
 
-
     cart.forEach(item => {
 
         itemCount += item.quantity;
-
 
         const cartItem =
             document.createElement("div");
 
         cartItem.className = "cart-item";
-
 
         cartItem.innerHTML = `
 
@@ -151,7 +148,6 @@ function updateCart() {
 
         `;
 
-
         cartContainer.appendChild(cartItem);
 
     });
@@ -164,7 +160,6 @@ function updateCart() {
     const cartCount =
         document.getElementById("cartCount");
 
-
     if (cartCount) {
 
         cartCount.innerText =
@@ -175,7 +170,6 @@ function updateCart() {
             }`;
 
     }
-
 
     calculateBill();
 }
@@ -189,20 +183,16 @@ function changeQuantity(id, change) {
 
     id = Number(id);
 
-
     const item =
         cart.find(
             item => item.id === id
         );
 
-
     if (!item) {
         return;
     }
 
-
     item.quantity += change;
-
 
     if (item.quantity <= 0) {
 
@@ -211,7 +201,6 @@ function changeQuantity(id, change) {
         );
 
     }
-
 
     updateCart();
 }
@@ -225,7 +214,6 @@ function calculateBill() {
 
     let subtotal = 0;
 
-
     cart.forEach(item => {
 
         subtotal +=
@@ -235,7 +223,9 @@ function calculateBill() {
 
 
     // GST = 5%
-    const gst = subtotal * 0.05;
+
+    const gst =
+        subtotal * 0.05;
 
 
     // --------------------------------------
@@ -245,9 +235,7 @@ function calculateBill() {
     const discountInput =
         document.getElementById("discount");
 
-
     let discount = 0;
-
 
     if (discountInput) {
 
@@ -258,14 +246,13 @@ function calculateBill() {
 
 
     // Discount cannot exceed subtotal + GST
+
     const maximumDiscount =
         subtotal + gst;
-
 
     if (discount > maximumDiscount) {
 
         discount = maximumDiscount;
-
 
         if (discountInput) {
 
@@ -284,7 +271,6 @@ function calculateBill() {
     let grandTotal =
         subtotal + gst - discount;
 
-
     if (grandTotal < 0) {
 
         grandTotal = 0;
@@ -299,10 +285,8 @@ function calculateBill() {
     const subtotalElement =
         document.getElementById("subtotal");
 
-
     const gstElement =
         document.getElementById("gst");
-
 
     const totalElement =
         document.getElementById("grandTotal");
@@ -362,12 +346,10 @@ function selectPayment(button, method) {
 
     selectedPayment = method;
 
-
     const buttons =
         document.querySelectorAll(
             ".payment-btn"
         );
-
 
     buttons.forEach(btn => {
 
@@ -376,7 +358,6 @@ function selectPayment(button, method) {
         );
 
     });
-
 
     button.classList.add("active");
 
@@ -396,21 +377,17 @@ document.addEventListener(
         ) {
 
             return;
-
         }
-
 
         const searchValue =
             event.target.value
                 .toLowerCase()
                 .trim();
 
-
         const items =
             document.querySelectorAll(
                 ".billing-item"
             );
-
 
         items.forEach(item => {
 
@@ -419,12 +396,10 @@ document.addEventListener(
                     item.dataset.name || ""
                 ).toLowerCase();
 
-
             const category =
                 (
                     item.dataset.category || ""
                 ).toLowerCase();
-
 
             if (
                 name.includes(searchValue) ||
@@ -457,12 +432,10 @@ function clearCart() {
 
     }
 
-
     const confirmed =
         confirm(
             "Are you sure you want to clear this order?"
         );
-
 
     if (!confirmed) {
 
@@ -470,9 +443,7 @@ function clearCart() {
 
     }
 
-
     cart = [];
-
 
     updateCart();
 
@@ -501,14 +472,93 @@ async function generateBill() {
 
 
     // --------------------------------------
+    // GET CUSTOMER DETAILS
+    // --------------------------------------
+
+    const customerNameInput =
+        document.getElementById("customerName");
+
+    const customerMobileInput =
+        document.getElementById("customerMobile");
+
+    const tableNoInput =
+        document.getElementById("tableNo");
+
+
+    const customerName =
+        customerNameInput
+            ? customerNameInput.value.trim()
+            : "";
+
+
+    const mobile =
+        customerMobileInput
+            ? customerMobileInput.value.trim()
+            : "";
+
+
+    const tableNo =
+        tableNoInput
+            ? tableNoInput.value.trim()
+            : "";
+
+
+    // --------------------------------------
+    // VALIDATE CUSTOMER DETAILS
+    // --------------------------------------
+
+    if (!customerName) {
+
+        alert(
+            "Please enter customer name."
+        );
+
+        if (customerNameInput) {
+            customerNameInput.focus();
+        }
+
+        return;
+
+    }
+
+
+    if (!mobile) {
+
+        alert(
+            "Please enter mobile number."
+        );
+
+        if (customerMobileInput) {
+            customerMobileInput.focus();
+        }
+
+        return;
+
+    }
+
+
+    if (!tableNo) {
+
+        alert(
+            "Please enter table number."
+        );
+
+        if (tableNoInput) {
+            tableNoInput.focus();
+        }
+
+        return;
+
+    }
+
+
+    // --------------------------------------
     // CALCULATE BILL
     // --------------------------------------
 
     calculateBill();
 
-
     let subtotal = 0;
-
 
     cart.forEach(item => {
 
@@ -582,6 +632,18 @@ async function generateBill() {
 
                     body: JSON.stringify({
 
+                        // CUSTOMER DETAILS
+                        customer_name:
+                            customerName,
+
+                        mobile:
+                            mobile,
+
+                        table_no:
+                            tableNo,
+
+
+                        // CART ITEMS
                         items: cart.map(item => ({
 
                             id: item.id,
@@ -591,6 +653,8 @@ async function generateBill() {
 
                         })),
 
+
+                        // BILL DETAILS
                         subtotal:
                             subtotal,
 
@@ -652,6 +716,14 @@ async function generateBill() {
         alert(
             `Bill generated successfully! 🎉\n\n` +
 
+            `Customer: ${
+                result.customer_name
+            }\n` +
+
+            `Table: ${
+                result.table_no
+            }\n` +
+
             `Invoice: ${
                 result.invoice_number
             }\n` +
@@ -678,12 +750,37 @@ async function generateBill() {
 
 
         // ----------------------------------
+        // RESET CUSTOMER DETAILS
+        // ----------------------------------
+
+        if (customerNameInput) {
+
+            customerNameInput.value = "";
+
+        }
+
+
+        if (customerMobileInput) {
+
+            customerMobileInput.value = "";
+
+        }
+
+
+        if (tableNoInput) {
+
+            tableNoInput.value = "";
+
+        }
+
+
+        // ----------------------------------
         // RESET DISCOUNT
         // ----------------------------------
 
         if (discountInput) {
 
-            discountInput.value = "";
+            discountInput.value = "0";
 
         }
 
@@ -718,6 +815,13 @@ async function generateBill() {
                 .classList.add("active");
 
         }
+
+
+        // ----------------------------------
+        // RECALCULATE BILL
+        // ----------------------------------
+
+        calculateBill();
 
     }
 
@@ -817,3 +921,4 @@ document.addEventListener(
 
     }
 );
+```

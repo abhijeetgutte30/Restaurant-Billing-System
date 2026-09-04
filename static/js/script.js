@@ -3,62 +3,14 @@
 // BILLING JAVASCRIPT
 // ==========================================
 
+
+// ==========================================
+// GLOBAL VARIABLES
+// ==========================================
+
 let cart = [];
 let selectedPayment = "Cash";
 
-function addToCart(id, name, price) {
-
-    id = Number(id);
-    price = Number(price);
-
-    const existingItem = cart.find(
-        item => item.id === id
-    );
-
-    if (existingItem) {
-        existingItem.quantity++;
-    } else {
-        cart.push({
-            id: id,
-            name: name,
-            price: price,
-            quantity: 1
-        });
-    }
-
-    updateCart();
-}
-
-
-// ==========================================
-// ADD ITEM TO CART
-// ==========================================
-
-(id, name, price) {
-
-    const existingItem = cart.find(
-        item => item.id === id
-    );
-
-    if (existingItem) {
-
-        existingItem.quantity++;
-
-    } else {
-
-        cart.push({
-            id: id,
-            name: name,
-            price: Number(price),
-            quantity: 1
-        });
-
-    }
-
-    updateCart();
-}
-
-
 
 // ==========================================
 // ADD ITEM TO CART
@@ -75,7 +27,7 @@ function addToCart(id, name, price) {
 
     if (existingItem) {
 
-        existingItem.quantity++;
+        existingItem.quantity += 1;
 
     } else {
 
@@ -90,9 +42,12 @@ function addToCart(id, name, price) {
 
     updateCart();
 }
+
+
 // ==========================================
 // UPDATE CART
 // ==========================================
+
 function updateCart() {
 
     const cartContainer =
@@ -102,7 +57,13 @@ function updateCart() {
         return;
     }
 
+
     cartContainer.innerHTML = "";
+
+
+    // --------------------------------------
+    // EMPTY CART
+    // --------------------------------------
 
     if (cart.length === 0) {
 
@@ -122,18 +83,27 @@ function updateCart() {
 
             </div>
         `;
+
     }
 
+
+    // --------------------------------------
+    // CART ITEMS
+    // --------------------------------------
+
     let itemCount = 0;
+
 
     cart.forEach(item => {
 
         itemCount += item.quantity;
 
+
         const cartItem =
             document.createElement("div");
 
         cartItem.className = "cart-item";
+
 
         cartItem.innerHTML = `
 
@@ -148,6 +118,7 @@ function updateCart() {
                 </span>
 
             </div>
+
 
             <div class="quantity-control">
 
@@ -169,21 +140,30 @@ function updateCart() {
 
             </div>
 
+
             <strong class="cart-item-total">
+
                 ₹${(
                     item.price * item.quantity
                 ).toFixed(2)}
+
             </strong>
 
         `;
+
 
         cartContainer.appendChild(cartItem);
 
     });
 
 
+    // --------------------------------------
+    // CART COUNT
+    // --------------------------------------
+
     const cartCount =
         document.getElementById("cartCount");
+
 
     if (cartCount) {
 
@@ -196,6 +176,7 @@ function updateCart() {
 
     }
 
+
     calculateBill();
 }
 
@@ -206,14 +187,22 @@ function updateCart() {
 
 function changeQuantity(id, change) {
 
+    id = Number(id);
+
+
     const item =
-        cart.find(item => item.id === id);
+        cart.find(
+            item => item.id === id
+        );
+
 
     if (!item) {
         return;
     }
 
+
     item.quantity += change;
+
 
     if (item.quantity <= 0) {
 
@@ -222,6 +211,7 @@ function changeQuantity(id, change) {
         );
 
     }
+
 
     updateCart();
 }
@@ -235,6 +225,7 @@ function calculateBill() {
 
     let subtotal = 0;
 
+
     cart.forEach(item => {
 
         subtotal +=
@@ -243,13 +234,20 @@ function calculateBill() {
     });
 
 
+    // GST = 5%
     const gst = subtotal * 0.05;
 
+
+    // --------------------------------------
+    // DISCOUNT
+    // --------------------------------------
 
     const discountInput =
         document.getElementById("discount");
 
+
     let discount = 0;
+
 
     if (discountInput) {
 
@@ -259,36 +257,52 @@ function calculateBill() {
     }
 
 
-    // Discount cannot be greater than subtotal + GST
+    // Discount cannot exceed subtotal + GST
     const maximumDiscount =
         subtotal + gst;
+
 
     if (discount > maximumDiscount) {
 
         discount = maximumDiscount;
 
+
         if (discountInput) {
+
             discountInput.value =
                 discount.toFixed(2);
+
         }
 
     }
 
+
+    // --------------------------------------
+    // GRAND TOTAL
+    // --------------------------------------
 
     let grandTotal =
         subtotal + gst - discount;
 
 
     if (grandTotal < 0) {
+
         grandTotal = 0;
+
     }
 
+
+    // --------------------------------------
+    // UPDATE HTML
+    // --------------------------------------
 
     const subtotalElement =
         document.getElementById("subtotal");
 
+
     const gstElement =
         document.getElementById("gst");
+
 
     const totalElement =
         document.getElementById("grandTotal");
@@ -328,7 +342,9 @@ document.addEventListener(
     "input",
     function(event) {
 
-        if (event.target.id === "discount") {
+        if (
+            event.target.id === "discount"
+        ) {
 
             calculateBill();
 
@@ -355,7 +371,9 @@ function selectPayment(button, method) {
 
     buttons.forEach(btn => {
 
-        btn.classList.remove("active");
+        btn.classList.remove(
+            "active"
+        );
 
     });
 
@@ -373,8 +391,12 @@ document.addEventListener(
     "input",
     function(event) {
 
-        if (event.target.id !== "menuSearch") {
+        if (
+            event.target.id !== "menuSearch"
+        ) {
+
             return;
+
         }
 
 
@@ -430,7 +452,9 @@ document.addEventListener(
 function clearCart() {
 
     if (cart.length === 0) {
+
         return;
+
     }
 
 
@@ -441,16 +465,19 @@ function clearCart() {
 
 
     if (!confirmed) {
+
         return;
+
     }
 
 
     cart = [];
 
+
     updateCart();
 
 }
-git 
+
 
 // ==========================================
 // GENERATE BILL
@@ -458,208 +485,66 @@ git
 
 async function generateBill() {
 
+    // --------------------------------------
+    // CHECK CART
+    // --------------------------------------
+
     if (cart.length === 0) {
 
-        alert("Please add at least one item to the bill.");
+        alert(
+            "Please add at least one item to the bill."
+        );
 
         return;
-    }
-
-    // Calculate latest bill values
-    calculateBill();
-
-    const subtotal = cart.reduce(
-        (sum, item) => sum + (item.price * item.quantity),
-        0
-    );
-
-    const gst = subtotal * 0.05;
-
-    const discountInput = document.getElementById("discount");
-
-    const discount = discountInput
-        ? Number(discountInput.value) || 0
-        : 0;
-
-    let grandTotal = subtotal + gst - discount;
-
-    if (grandTotal < 0) {
-        grandTotal = 0;
-    }
-
-    try {
-
-        const response = await fetch("/billing/generate", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-
-                items: cart,
-
-                subtotal: subtotal,
-
-                gst: gst,
-
-                discount: discount,
-
-                grand_total: grandTotal,
-
-                payment_method: selectedPayment
-
-            })
-
-        });
-
-
-        const result = await response.json();
-
-
-        if (!response.ok || !result.success) {
-
-            alert(
-                result.message ||
-                "Unable to generate bill."
-            );
-
-            return;
-        }
-
-
-        // ==================================
-        // BILL GENERATED SUCCESSFULLY
-        // ==================================
-
-        alert(
-            `Bill generated successfully! 🎉\n\n` +
-
-            `Invoice: ${result.invoice_number}\n` +
-
-            `Payment: ${result.payment_method}\n` +
-
-            `Total: ₹${Number(result.total).toFixed(2)}`
-        );
-
-
-        // Clear cart after successful bill
-        cart = [];
-
-        updateCart();
-
-
-    } catch (error) {
-
-        console.error(
-            "Bill generation error:",
-            error
-        );
-
-        alert(
-            "Something went wrong while generating the bill."
-        );
 
     }
 
-}
+
+    // --------------------------------------
+    // CALCULATE BILL
+    // --------------------------------------
 
     calculateBill();
 
 
-    // --------------------------------------
-    // GET BILL VALUES
-    // --------------------------------------
-
-    const subtotalText =
-        document.getElementById(
-            "subtotal"
-        ).innerText;
+    let subtotal = 0;
 
 
-    const gstText =
-        document.getElementById(
-            "gst"
-        ).innerText;
+    cart.forEach(item => {
 
+        subtotal +=
+            item.price * item.quantity;
 
-    const discountInput =
-        document.getElementById(
-            "discount"
-        );
-
-
-    const grandTotalText =
-        document.getElementById(
-            "grandTotal"
-        ).innerText;
-
-
-    // Convert ₹1,234.00 → 1234
-    const subtotal =
-        parseFloat(
-            subtotalText
-                .replace("₹", "")
-                .replace(/,/g, "")
-        ) || 0;
+    });
 
 
     const gst =
-        parseFloat(
-            gstText
-                .replace("₹", "")
-                .replace(/,/g, "")
-        ) || 0;
+        subtotal * 0.05;
+
+
+    const discountInput =
+        document.getElementById("discount");
 
 
     const discount =
-        Number(
-            discountInput
-                ? discountInput.value
-                : 0
-        ) || 0;
+        discountInput
+            ? Number(discountInput.value) || 0
+            : 0;
 
 
-    const grandTotal =
-        parseFloat(
-            grandTotalText
-                .replace("₹", "")
-                .replace(/,/g, "")
-        ) || 0;
+    let grandTotal =
+        subtotal + gst - discount;
 
 
-    // --------------------------------------
-    // PREPARE BILL DATA
-    // --------------------------------------
+    if (grandTotal < 0) {
 
-    const billData = {
+        grandTotal = 0;
 
-        items: cart.map(item => ({
-
-            id: item.id,
-
-            quantity: item.quantity
-
-        })),
-
-        subtotal: subtotal,
-
-        gst: gst,
-
-        discount: discount,
-
-        grand_total: grandTotal,
-
-        payment_method:
-            selectedPayment
-
-    };
+    }
 
 
     // --------------------------------------
-    // DISABLE BUTTON
+    // GENERATE BUTTON
     // --------------------------------------
 
     const generateButton =
@@ -681,7 +566,7 @@ async function generateBill() {
     try {
 
         // ----------------------------------
-        // SEND BILL TO FLASK
+        // SEND DATA TO FLASK
         // ----------------------------------
 
         const response =
@@ -695,124 +580,177 @@ async function generateBill() {
                             "application/json"
                     },
 
-                    body:
-                        JSON.stringify(
-                            billData
-                        )
+                    body: JSON.stringify({
+
+                        items: cart.map(item => ({
+
+                            id: item.id,
+
+                            quantity:
+                                item.quantity
+
+                        })),
+
+                        subtotal:
+                            subtotal,
+
+                        gst:
+                            gst,
+
+                        discount:
+                            discount,
+
+                        grand_total:
+                            grandTotal,
+
+                        payment_method:
+                            selectedPayment
+
+                    })
+
                 }
             );
 
+
+        // ----------------------------------
+        // READ RESPONSE
+        // ----------------------------------
 
         const result =
             await response.json();
 
 
+        console.log(
+            "BILL RESPONSE:",
+            result
+        );
+
+
         // ----------------------------------
-        // SUCCESS
+        // ERROR
         // ----------------------------------
 
         if (
-            response.ok &&
-            result.success
+            !response.ok ||
+            !result.success
         ) {
-
-            alert(
-                `Bill generated successfully! 🎉\n\n` +
-
-                `Invoice: ${
-                    result.invoice_number
-                }\n` +
-
-                `Payment: ${
-                    result.payment_method
-                }\n` +
-
-                `Total: ₹${
-                    Number(
-                        result.total
-                    ).toFixed(2)
-                }`
-            );
-
-
-            // Clear current order
-            cart = [];
-
-            updateCart();
-
-
-            // Reset discount
-            if (discountInput) {
-
-                discountInput.value = "";
-
-            }
-
-
-            // Reset payment to Cash
-            selectedPayment = "Cash";
-
-
-            const paymentButtons =
-                document.querySelectorAll(
-                    ".payment-btn"
-                );
-
-
-            paymentButtons.forEach(btn => {
-
-                btn.classList.remove(
-                    "active"
-                );
-
-            });
-
-
-            // Activate first payment button
-            if (paymentButtons.length > 0) {
-
-                paymentButtons[0]
-                    .classList.add("active");
-
-            }
-
-
-        } else {
 
             alert(
                 result.message ||
                 "Unable to generate bill."
             );
 
+            return;
+
         }
 
 
-    } catch (error) {
+        // ----------------------------------
+        // SUCCESS
+        // ----------------------------------
+
+        alert(
+            `Bill generated successfully! 🎉\n\n` +
+
+            `Invoice: ${
+                result.invoice_number
+            }\n` +
+
+            `Payment: ${
+                result.payment_method
+            }\n` +
+
+            `Total: ₹${
+                Number(
+                    result.total
+                ).toFixed(2)
+            }`
+        );
+
+
+        // ----------------------------------
+        // CLEAR CART
+        // ----------------------------------
+
+        cart = [];
+
+        updateCart();
+
+
+        // ----------------------------------
+        // RESET DISCOUNT
+        // ----------------------------------
+
+        if (discountInput) {
+
+            discountInput.value = "";
+
+        }
+
+
+        // ----------------------------------
+        // RESET PAYMENT
+        // ----------------------------------
+
+        selectedPayment = "Cash";
+
+
+        const paymentButtons =
+            document.querySelectorAll(
+                ".payment-btn"
+            );
+
+
+        paymentButtons.forEach(btn => {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
+
+
+        if (
+            paymentButtons.length > 0
+        ) {
+
+            paymentButtons[0]
+                .classList.add("active");
+
+        }
+
+    }
+
+
+    catch (error) {
 
         console.error(
-            "Generate Bill Error:",
+            "Bill generation error:",
             error
         );
 
 
         alert(
-            "Something went wrong while generating the bill.\n\n" +
-            "Please check your internet connection and try again."
+            "Something went wrong while generating the bill."
         );
 
     }
 
 
-    // --------------------------------------
-    // RESTORE BUTTON
-    // --------------------------------------
+    finally {
 
-    if (generateButton) {
+        // ----------------------------------
+        // RESTORE BUTTON
+        // ----------------------------------
 
-        generateButton.disabled = false;
+        if (generateButton) {
 
-        generateButton.innerText =
-            "Generate Bill";
+            generateButton.disabled = false;
+
+            generateButton.innerText =
+                "Generate Bill";
+
+        }
 
     }
 
@@ -832,6 +770,10 @@ document.addEventListener(
         );
 
 
+        // ----------------------------------
+        // DISCOUNT
+        // ----------------------------------
+
         const discount =
             document.getElementById(
                 "discount"
@@ -848,7 +790,10 @@ document.addEventListener(
         }
 
 
-        // Set Cash as default payment
+        // ----------------------------------
+        // DEFAULT PAYMENT = CASH
+        // ----------------------------------
+
         const firstPaymentButton =
             document.querySelector(
                 ".payment-btn"
@@ -863,6 +808,10 @@ document.addEventListener(
 
         }
 
+
+        // ----------------------------------
+        // INITIAL BILL
+        // ----------------------------------
 
         calculateBill();
 

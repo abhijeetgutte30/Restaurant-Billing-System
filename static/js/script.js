@@ -6,12 +6,35 @@
 let cart = [];
 let selectedPayment = "Cash";
 
+function addToCart(id, name, price) {
+
+    id = Number(id);
+    price = Number(price);
+
+    const existingItem = cart.find(
+        item => item.id === id
+    );
+
+    if (existingItem) {
+        existingItem.quantity++;
+    } else {
+        cart.push({
+            id: id,
+            name: name,
+            price: price,
+            quantity: 1
+        });
+    }
+
+    updateCart();
+}
+
 
 // ==========================================
 // ADD ITEM TO CART
 // ==========================================
 
-function addToCart(id, name, price) {
+(id, name, price) {
 
     const existingItem = cart.find(
         item => item.id === id
@@ -36,10 +59,40 @@ function addToCart(id, name, price) {
 }
 
 
+
+// ==========================================
+// ADD ITEM TO CART
+// ==========================================
+
+function addToCart(id, name, price) {
+
+    id = Number(id);
+    price = Number(price);
+
+    const existingItem = cart.find(
+        item => item.id === id
+    );
+
+    if (existingItem) {
+
+        existingItem.quantity++;
+
+    } else {
+
+        cart.push({
+            id: id,
+            name: name,
+            price: price,
+            quantity: 1
+        });
+
+    }
+
+    updateCart();
+}
 // ==========================================
 // UPDATE CART
 // ==========================================
-
 function updateCart() {
 
     const cartContainer =
@@ -397,7 +450,7 @@ function clearCart() {
     updateCart();
 
 }
-
+git 
 
 // ==========================================
 // GENERATE BILL

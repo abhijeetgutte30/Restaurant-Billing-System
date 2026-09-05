@@ -28,11 +28,13 @@ class Admin(UserMixin, db.Model):
     )
 
     def set_password(self, password):
+
         self.password = bcrypt.generate_password_hash(
             password
         ).decode("utf-8")
 
     def check_password(self, password):
+
         return bcrypt.check_password_hash(
             self.password,
             password
@@ -218,6 +220,78 @@ class Customer(db.Model):
         db.ForeignKey("bills.id"),
         nullable=True,
         unique=True
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=db.func.now()
+    )
+
+
+# ==========================================
+# DAILY INVENTORY MODEL
+# ==========================================
+
+class Inventory(db.Model):
+
+    __tablename__ = "inventory"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    # Item name
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    # Category
+    category = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    # Previous day's closing stock
+    opening_quantity = db.Column(
+        db.Float,
+        nullable=False,
+        default=0
+    )
+
+    # New stock added today
+    added_quantity = db.Column(
+        db.Float,
+        nullable=False,
+        default=0
+    )
+
+    # Total available stock
+    current_quantity = db.Column(
+        db.Float,
+        nullable=False,
+        default=0
+    )
+
+    # kg / litre / pieces / bottles etc.
+    unit = db.Column(
+        db.String(20),
+        nullable=False
+    )
+
+    # Alert level
+    minimum_stock = db.Column(
+        db.Float,
+        nullable=False,
+        default=0
+    )
+
+    # Date of this stock entry
+    stock_date = db.Column(
+        db.Date,
+        nullable=False,
+        default=db.func.current_date()
     )
 
     created_at = db.Column(

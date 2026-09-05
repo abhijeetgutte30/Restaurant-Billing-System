@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inventory | RestoBill</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    >
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #0f0f0f;
+            color: #fff;
+        }
+
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            width: 240px;
+            height: 100vh;
+
+            background: #151515;
+            border-right: 1px solid #292929;
+
+            padding: 25px 15px;
+        }
+
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+
+            color: #ff7a00;
+
+            text-align: center;
+
+            margin-bottom: 35px;
+        }
+
+
+        .logo span {
+            color: white;
+        }
+
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+
+            gap: 14px;
+
+            padding: 14px 16px;
+
+            margin-bottom: 8px;
+
+            color: #aaa;
+
+            text-decoration: none;
+
+            border-radius: 10px;
+
+            transition: 0.3s;
+        }
+
+
+        .menu-link:hover {
+            background: #222;
+            color: white;
+        }
+
+
+        .menu-link.active {
+            background: #ff7a00;
+            color: white;
+        }
+
+
+        .menu-link i {
+            width: 20px;
+        }
+
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+
+        .topbar {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 30px;
+        }
+
+
+        .topbar h1 {
+            font-size: 28px;
+        }
+
+
+        .topbar p {
+            color: #888;
+            margin-top: 5px;
+        }
+
+
+        .admin {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+
+        .admin-icon {
+            width: 42px;
+            height: 42px;
+
+            background: #ff7a00;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        /* ================= SUMMARY ================= */
+
+        .summary {
+            display: grid;
+
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 18px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .card {
+            background: #181818;
+
+            border: 1px solid #292929;
+
+            border-radius: 14px;
+
+            padding: 22px;
+        }
+
+
+        .card-title {
+            color: #999;
+
+            font-size: 14px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .card-value {
+            font-size: 28px;
+
+            font-weight: bold;
+        }
+
+
+        .orange {
+            color: #ff7a00;
+        }
+
+
+        .red {
+            color: #ff4d4d;
+        }
+
+
+        .yellow {
+            color: #ffc107;
+        }
+
+
+        .green {
+            color: #25d366;
+        }
+
+
+        /* ================= TOOLBAR ================= */
+
+        .toolbar {
+            background: #181818;
+
+            border: 1px solid #292929;
+
+            padding: 18px;
+
+            border-radius: 14px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .toolbar-left {
+            display: flex;
+
+            gap: 12px;
+
+            flex: 1;
+        }
+
+
+        input,
+        select {
+            background: #101010;
+
+            border: 1px solid #333;
+
+            color: white;
+
+            padding: 12px 14px;
+
+            border-radius: 8px;
+
+            outline: none;
+        }
+
+
+        input:focus,
+        select:focus {
+            border-color: #ff7a00;
+        }
+
+
+        .search {
+            width: 280px;
+        }
+
+
+        .btn {
+            border: none;
+
+            padding: 12px 18px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+        }
+
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+
+        .btn-orange {
+            background: #ff7a00;
+
+            color: white;
+        }
+
+
+        .btn-dark {
+            background: #292929;
+
+            color: white;
+        }
+
+
+        /* ================= TABLE ================= */
+
+        .table-container {
+            background: #181818;
+
+            border: 1px solid #292929;
+
+            border-radius: 14px;
+
+            overflow-x: auto;
+        }
+
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 1050px;
+        }
+
+
+        th {
+            text-align: left;
+
+            padding: 17px;
+
+            color: #888;
+
+            font-size: 13px;
+
+            border-bottom: 1px solid #292929;
+
+            text-transform: uppercase;
+        }
+
+
+        td {
+            padding: 17px;
+
+            border-bottom: 1px solid #242424;
+        }
+
+
+        tr:hover {
+            background: #202020;
+        }
+
+
+        .item-name {
+            font-weight: bold;
+        }
+
+
+        .category {
+            color: #aaa;
+
+            font-size: 14px;
+        }
+
+
+        .stock-number {
+            font-weight: bold;
+
+            font-size: 16px;
+        }
+
+
+        .unit {
+            color: #888;
+
+            font-size: 13px;
+
+            margin-left: 3px;
+        }
+
+
+        /* ================= STATUS ================= */
+
+        .status {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 7px 11px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: bold;
+        }
+
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+        }
+
+
+        .status-good {
+            background: rgba(37, 211, 102, 0.12);
+
+            color: #25d366;
+        }
+
+
+        .status-good .status-dot {
+            background: #25d366;
+        }
+
+
+        .status-low {
+            background: rgba(255, 193, 7, 0.12);
+
+            color: #ffc107;
+        }
+
+
+        .status-low .status-dot {
+            background: #ffc107;
+        }
+
+
+        .status-out {
+            background: rgba(255, 77, 77, 0.12);
+
+            color: #ff4d4d;
+        }
+
+
+        .status-out .status-dot {
+            background: #ff4d4d;
+        }
+
+
+        .status-none {
+            background: rgba(150, 150, 150, 0.12);
+
+            color: #999;
+        }
+
+
+        .status-none .status-dot {
+            background: #777;
+        }
+
+
+        /* ================= ACTIONS ================= */
+
+        .actions {
+            display: flex;
+
+            gap: 7px;
+        }
+
+
+        .action-btn {
+            width: 35px;
+
+            height: 35px;
+
+            border: 1px solid #333;
+
+            background: #222;
+
+            color: white;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+        }
+
+
+        .action-btn:hover {
+            background: #ff7a00;
+
+            border-color: #ff7a00;
+        }
+
+
+        .action-btn.delete:hover {
+            background: #dc3545;
+
+            border-color: #dc3545;
+        }
+
+
+        /* ================= EMPTY ================= */
+
+        .empty {
+            text-align: center;
+
+            padding: 60px;
+
+            color: #777;
+        }
+
+
+        .empty i {
+            font-size: 45px;
+
+            margin-bottom: 15px;
+        }
+
+
+        /* ================= MODAL ================= */
+
+        .modal {
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0, 0, 0, 0.75);
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 1000;
+        }
+
+
+        .modal-box {
+            width: 430px;
+
+            max-width: 92%;
+
+            background: #181818;
+
+            border: 1px solid #333;
+
+            border-radius: 15px;
+
+            padding: 25px;
+        }
+
+
+        .modal-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 22px;
+        }
+
+
+        .modal-header h2 {
+            font-size: 21px;
+        }
+
+
+        .close {
+            font-size: 24px;
+
+            color: #888;
+
+            cursor: pointer;
+        }
+
+
+        .close:hover {
+            color: white;
+        }
+
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+
+        .form-group label {
+            display: block;
+
+            color: #aaa;
+
+            margin-bottom: 7px;
+
+            font-size: 13px;
+        }
+
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+        }
+
+
+        .modal-footer {
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-top: 20px;
+        }
+
+
+        /* ================= FLASH ================= */
+
+        .flash-container {
+            margin-bottom: 20px;
+        }
+
+
+        .flash {
+            padding: 13px 16px;
+
+            border-radius: 9px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .flash.success {
+            background: rgba(37, 211, 102, 0.12);
+
+            border: 1px solid #25d366;
+
+            color: #25d366;
+        }
+
+
+        .flash.error {
+            background: rgba(255, 77, 77, 0.12);
+
+            border: 1px solid #ff4d4d;
+
+            color: #ff4d4d;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width: 1100px) {
+
+            .summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media(max-width: 800px) {
+
+            .sidebar {
+                width: 70px;
+
+                padding: 20px 8px;
+            }
+
+
+            .logo {
+                font-size: 0;
+            }
+
+
+            .logo::after {
+                content: "R";
+
+                font-size: 25px;
+
+                color: #ff7a00;
+            }
+
+
+            .menu-link span {
+                display: none;
+            }
+
+
+            .menu-link {
+                justify-content: center;
+            }
+
+
+            .main {
+                margin-left: 70px;
+
+                padding: 20px;
+            }
+
+
+            .toolbar {
+                flex-direction: column;
+            }
+
+
+            .toolbar-left {
+                width: 100%;
+            }
+
+
+            .search {
+                width: 100%;
+            }
+
+        }
+
+
+        @media(max-width: 550px) {
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+
+            .topbar h1 {
+                font-size: 22px;
+            }
+
+
+            .admin {
+                display: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<div class="sidebar">
+
+    <div class="logo">
+        Resto<span>Bill</span>
+    </div>
+
+
+    <a href="{{ url_for('dashboard') }}" class="menu-link">
+
+        <i class="fa-solid fa-house"></i>
+
+        <span>Dashboard</span>
+
+    </a>
+
+
+    <a href="{{ url_for('menu.menu_list') }}" class="menu-link">
+
+        <i class="fa-solid fa-utensils"></i>
+
+        <span>Menu</span>
+
+    </a>
+
+
+    <a href="{{ url_for('billing.billing_page') }}" class="menu-link">
+
+        <i class="fa-solid fa-receipt"></i>
+
+        <span>Billing</span>
+
+    </a>
+
+
+    <!-- CUSTOMERS -->
+
+    <a href="{{ url_for('customers.customers_page') }}" class="menu-link">
+
+        <i class="fa-solid fa-users"></i>
+
+        <span>Customers</span>
+
+    </a>
+
+
+    <!-- INVENTORY -->
+
+    <a href="{{ url_for('inventory.inventory_list') }}"
+       class="menu-link active">
+
+        <i class="fa-solid fa-boxes-stacked"></i>
+
+        <span>Inventory</span>
+
+    </a>
+
+
+    <!-- REPORTS -->
+
+    <a href="#" class="menu-link">
+
+        <i class="fa-solid fa-chart-line"></i>
+
+        <span>Reports</span>
+
+    </a>
+
+
+    <!-- LOGOUT -->
+
+    <a href="{{ url_for('auth.logout') }}" class="menu-link">
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        <span>Logout</span>
+
+    </a>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<div class="main">
+
+
+    <div class="topbar">
+
+        <div>
+
+            <h1>Daily Inventory</h1>
+
+            <p>
+                Track today's incoming stock and remaining stock.
+            </p>
+
+        </div>
+
+
+        <div class="admin">
+
+            <div>
+                <strong>Admin</strong>
+            </div>
+
+
+            <div class="admin-icon">
+
+                <i class="fa-solid fa-user"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         FLASH MESSAGES
+    ================================================= -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-container">
+
+                {% for category, message in messages %}
+
+                    <div class="flash {{ category }}">
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- =================================================
+         SUMMARY
+    ================================================= -->
+
+    <div class="summary">
+
+
+        <div class="card">
+
+            <div class="card-title">
+                TOTAL ITEMS
+            </div>
+
+            <div class="card-value orange">
+                {{ total_items }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                LOW STOCK
+            </div>
+
+            <div class="card-value yellow">
+                {{ low_stock_count }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                OUT OF STOCK
+            </div>
+
+            <div class="card-value red">
+                {{ out_of_stock_count }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                AVAILABLE
+            </div>
+
+            <div class="card-value green">
+
+                {{ total_items - out_of_stock_count }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         TOOLBAR
+    ================================================= -->
+
+    <div class="toolbar">
+
+
+        <div class="toolbar-left">
+
+
+            <input
+                type="text"
+                id="searchInput"
+                class="search"
+                placeholder="Search inventory..."
+            >
+
+
+            <select id="categoryFilter">
+
+                <option value="all">
+                    All Categories
+                </option>
+
+
+                {% set categories = [] %}
+
+                {% for item in items %}
+
+                    {% if item.category not in categories %}
+
+                        {% set _ = categories.append(item.category) %}
+
+                        <option value="{{ item.category|lower }}">
+
+                            {{ item.category }}
+
+                        </option>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <button
+            class="btn btn-orange"
+            onclick="openModal('addModal')"
+        >
+
+            <i class="fa-solid fa-plus"></i>
+
+            Add Inventory Item
+
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         TABLE
+    ================================================= -->
+
+    <div class="table-container">
+
+
+        {% if items %}
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>Item</th>
+
+                    <th>Category</th>
+
+                    <th>Opening</th>
+
+                    <th>Added Today</th>
+
+                    <th>Current</th>
+
+                    <th>Minimum</th>
+
+                    <th>Status</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="inventoryTable">
+
+
+            {% for item in items %}
+
+
+                <tr
+                    class="inventory-row"
+                    data-name="{{ item.name|lower }}"
+                    data-category="{{ item.category|lower }}"
+                >
+
+
+                    <!-- ITEM -->
+
+                    <td>
+
+                        <div class="item-name">
+                            {{ item.name }}
+                        </div>
+
+                        <div class="category">
+                            {{ item.unit }}
+                        </div>
+
+                    </td>
+
+
+                    <!-- CATEGORY -->
+
+                    <td>
+
+                        <span class="category">
+                            {{ item.category }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- OPENING -->
+
+                    <td>
+
+                        <span class="stock-number">
+
+                            {{ "%.2f"|format(item.opening_quantity)|replace(".00", "") }}
+
+                        </span>
+
+                        <span class="unit">
+                            {{ item.unit }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- ADDED TODAY -->
+
+                    <td>
+
+                        {% if item.added_quantity > 0 %}
+
+                            <span class="stock-number orange">
+
+                                +{{ "%.2f"|format(item.added_quantity)|replace(".00", "") }}
+
+                            </span>
+
+                            <span class="unit">
+                                {{ item.unit }}
+                            </span>
+
+                        {% else %}
+
+                            <span style="color:#777;">
+                                Not Added
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- CURRENT -->
+
+                    <td>
+
+                        <span class="stock-number">
+
+                            {{ "%.2f"|format(item.current_quantity)|replace(".00", "") }}
+
+                        </span>
+
+                        <span class="unit">
+                            {{ item.unit }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- MINIMUM -->
+
+                    <td>
+
+                        <span>
+
+                            {{ "%.2f"|format(item.minimum_stock)|replace(".00", "") }}
+
+                        </span>
+
+                        <span class="unit">
+                            {{ item.unit }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+
+                        {% if item.current_quantity <= 0 %}
+
+                            <span class="status status-out">
+
+                                <span class="status-dot"></span>
+
+                                Out of Stock
+
+                            </span>
+
+
+                        {% elif item.current_quantity <= item.minimum_stock %}
+
+                            <span class="status status-low">
+
+                                <span class="status-dot"></span>
+
+                                Low Stock
+
+                            </span>
+
+
+                        {% elif item.added_quantity == 0 %}
+
+                            <span class="status status-none">
+
+                                <span class="status-dot"></span>
+
+                                Not Added Today
+
+                            </span>
+
+
+                        {% else %}
+
+                            <span class="status status-good">
+
+                                <span class="status-dot"></span>
+
+                                In Stock
+
+                            </span>
+
+                        {% endif %}
+
+
+                    </td>
+
+
+                    <!-- ACTIONS -->
+
+                    <td>
+
+                        <div class="actions">
+
+
+                            <!-- ADD STOCK -->
+
+                            <button
+                                type="button"
+                                class="action-btn"
+                                title="Add Stock"
+
+                                data-item-id="{{ item.id }}"
+
+                                data-item-name="{{ item.name|e }}"
+
+                                data-item-unit="{{ item.unit|e }}"
+
+                                onclick="openAddStockModal(
+                                    this.dataset.itemId,
+                                    this.dataset.itemName,
+                                    this.dataset.itemUnit
+                                )"
+                            >
+
+                                <i class="fa-solid fa-plus"></i>
+
+                            </button>
+
+
+                            <!-- UPDATE CURRENT -->
+
+                            <button
+                                type="button"
+                                class="action-btn"
+                                title="Update Current / Closing Stock"
+
+                                data-item-id="{{ item.id }}"
+
+                                data-item-name="{{ item.name|e }}"
+
+                                data-item-quantity="{{ item.current_quantity }}"
+
+                                data-item-unit="{{ item.unit|e }}"
+
+                                onclick="openUpdateModal(
+                                    this.dataset.itemId,
+                                    this.dataset.itemName,
+                                    this.dataset.itemQuantity,
+                                    this.dataset.itemUnit
+                                )"
+                            >
+
+                                <i class="fa-solid fa-pen"></i>
+
+                            </button>
+
+
+                            <!-- DELETE -->
+
+                            <form
+                                method="POST"
+
+                                action="{{ url_for(
+                                    'inventory.delete_inventory',
+                                    item_id=item.id
+                                ) }}"
+
+                                onsubmit="return confirm(
+                                    'Delete {{ item.name }} from today inventory?'
+                                );"
+
+                                style="display:inline;"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="action-btn delete"
+                                    title="Delete"
+                                >
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </button>
+
+                            </form>
+
+
+                        </div>
+
+                    </td>
+
+
+                </tr>
+
+
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+
+        {% else %}
+
+
+            <div class="empty">
+
+                <i class="fa-solid fa-box-open"></i>
+
+                <h3>No Inventory Items</h3>
+
+                <p>
+                    Add today's inventory to get started.
+                </p>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     ADD NEW ITEM MODAL
+===================================================== -->
+
+<div class="modal" id="addModal">
+
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h2>
+                Add Inventory Item
+            </h2>
+
+
+            <span
+                class="close"
+                onclick="closeModal('addModal')"
+            >
+                ×
+            </span>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('inventory.add_inventory') }}"
+        >
+
+
+            <div class="form-group">
+
+                <label>
+                    Item Name
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="e.g. Paneer"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Category
+                </label>
+
+                <input
+                    type="text"
+                    name="category"
+                    placeholder="e.g. Dairy"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Today's Added Quantity
+                </label>
+
+                <input
+                    type="number"
+                    name="quantity"
+                    step="0.01"
+                    min="0"
+                    placeholder="e.g. 8"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Unit
+                </label>
+
+
+                <select
+                    name="unit"
+                    required
+                >
+
+                    <option value="">
+                        Select Unit
+                    </option>
+
+                    <option value="kg">
+                        Kilogram (kg)
+                    </option>
+
+                    <option value="litre">
+                        Litre
+                    </option>
+
+                    <option value="piece">
+                        Piece
+                    </option>
+
+                    <option value="packet">
+                        Packet
+                    </option>
+
+                    <option value="bottle">
+                        Bottle
+                    </option>
+
+                    <option value="box">
+                        Box
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Minimum Stock Alert
+                </label>
+
+                <input
+                    type="number"
+                    name="minimum_stock"
+                    step="0.01"
+                    min="0"
+                    value="0"
+                    placeholder="e.g. 2"
+                >
+
+            </div>
+
+
+            <div class="modal-footer">
+
+
+                <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="closeModal('addModal')"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-orange"
+                >
+                    Add Item
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     ADD STOCK MODAL
+===================================================== -->
+
+<div class="modal" id="addStockModal">
+
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h2>
+                Add Today's Stock
+            </h2>
+
+
+            <span
+                class="close"
+                onclick="closeModal('addStockModal')"
+            >
+                ×
+            </span>
+
+        </div>
+
+
+        <form
+            method="POST"
+            id="addStockForm"
+        >
+
+
+            <p
+                id="addStockItemName"
+                style="
+                    color:#ff7a00;
+                    font-weight:bold;
+                    margin-bottom:20px;
+                "
+            ></p>
+
+
+            <div class="form-group">
+
+                <label>
+                    Quantity to Add
+                </label>
+
+                <input
+                    type="number"
+                    name="quantity"
+                    step="0.01"
+                    min="0.01"
+                    required
+                    placeholder="Enter quantity"
+                >
+
+            </div>
+
+
+            <div class="modal-footer">
+
+
+                <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="closeModal('addStockModal')"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-orange"
+                >
+                    Add Stock
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     UPDATE CURRENT / CLOSING STOCK MODAL
+===================================================== -->
+
+<div class="modal" id="updateModal">
+
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h2>
+                Update Current Stock
+            </h2>
+
+
+            <span
+                class="close"
+                onclick="closeModal('updateModal')"
+            >
+                ×
+            </span>
+
+        </div>
+
+
+        <form
+            method="POST"
+            id="updateForm"
+        >
+
+
+            <p
+                id="updateItemName"
+                style="
+                    color:#ff7a00;
+                    font-weight:bold;
+                    margin-bottom:20px;
+                "
+            ></p>
+
+
+            <div class="form-group">
+
+                <label>
+                    Current / Closing Quantity
+                </label>
+
+                <input
+                    type="number"
+                    name="quantity"
+                    id="updateQuantity"
+                    step="0.01"
+                    min="0"
+                    required
+                >
+
+            </div>
+
+
+            <p
+                style="
+                    color:#777;
+                    font-size:12px;
+                    line-height:1.5;
+                "
+            >
+                Enter the remaining stock at the end of the day.
+                This amount will automatically become tomorrow's
+                opening stock.
+            </p>
+
+
+            <div class="modal-footer">
+
+
+                <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="closeModal('updateModal')"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-orange"
+                >
+                    Save Stock
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+
+    /* ================= MODAL ================= */
+
+
+    function openModal(id) {
+
+        document.getElementById(id).style.display = "flex";
+
+    }
+
+
+    function closeModal(id) {
+
+        document.getElementById(id).style.display = "none";
+
+    }
+
+
+    window.onclick = function(event) {
+
+        if (event.target.classList.contains("modal")) {
+
+            event.target.style.display = "none";
+
+        }
+
+    };
+
+
+    /* ================= ADD STOCK ================= */
+
+
+    function openAddStockModal(
+        itemId,
+        itemName,
+        unit
+    ) {
+
+
+        document.getElementById(
+            "addStockForm"
+        ).action =
+            "/add-stock/" + itemId;
+
+
+        document.getElementById(
+            "addStockItemName"
+        ).innerHTML =
+            itemName + " (" + unit + ")";
+
+
+        openModal("addStockModal");
+
+    }
+
+
+    /* ================= UPDATE STOCK ================= */
+
+
+    function openUpdateModal(
+        itemId,
+        itemName,
+        currentQuantity,
+        unit
+    ) {
+
+
+        document.getElementById(
+            "updateForm"
+        ).action =
+            "/update-inventory/" + itemId;
+
+
+        document.getElementById(
+            "updateItemName"
+        ).innerHTML =
+            itemName + " (" + unit + ")";
+
+
+        document.getElementById(
+            "updateQuantity"
+        ).value =
+            currentQuantity;
+
+
+        openModal("updateModal");
+
+    }
+
+
+    /* ================= SEARCH ================= */
+
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+
+    const categoryFilter =
+        document.getElementById("categoryFilter");
+
+
+    function filterInventory() {
+
+
+        const search =
+            searchInput.value
+            .toLowerCase()
+            .trim();
+
+
+        const category =
+            categoryFilter.value
+            .toLowerCase();
+
+
+        const rows =
+            document.querySelectorAll(
+                ".inventory-row"
+            );
+
+
+        rows.forEach(function(row) {
+
+
+            const name =
+                row.dataset.name;
+
+
+            const rowCategory =
+                row.dataset.category;
+
+
+            const matchesSearch =
+                name.includes(search);
+
+
+            const matchesCategory =
+                category === "all"
+                ||
+                rowCategory === category;
+
+
+            if (
+                matchesSearch
+                &&
+                matchesCategory
+            ) {
+
+                row.style.display = "";
+
+            } else {
+
+                row.style.display = "none";
+
+            }
+
+        });
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        filterInventory
+    );
+
+
+    categoryFilter.addEventListener(
+        "change",
+        filterInventory
+    );
+
+
+    /* ================= AUTO HIDE FLASH ================= */
+
+
+    setTimeout(function() {
+
+
+        const flashes =
+            document.querySelectorAll(
+                ".flash"
+            );
+
+
+        flashes.forEach(function(flash) {
+
+
+            flash.style.transition =
+                "opacity 0.5s";
+
+
+            flash.style.opacity = "0";
+
+
+            setTimeout(function() {
+
+                flash.remove();
+
+            }, 500);
+
+
+        });
+
+
+    }, 4000);
+
+
+</script>
+
+
+</body>
+
+</html>

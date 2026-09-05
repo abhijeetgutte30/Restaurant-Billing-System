@@ -18,9 +18,7 @@
 <div class="dashboard-wrapper">
 
 
-    <!-- ==============================
-         SIDEBAR
-    =============================== -->
+    <!-- SIDEBAR -->
 
     <aside class="sidebar">
 
@@ -35,73 +33,51 @@
 
         </div>
 
-
         <div class="menu-title">
             MAIN MENU
         </div>
 
-
         <nav>
 
             <a href="/dashboard" class="nav-link active">
-
                 <span class="nav-icon">▦</span>
                 <span>Dashboard</span>
-
             </a>
-
 
             <a href="/menu" class="nav-link">
-
                 <span class="nav-icon">☰</span>
                 <span>Menu</span>
-
             </a>
-
 
             <a href="/billing" class="nav-link">
-
                 <span class="nav-icon">▤</span>
                 <span>Billing</span>
-
             </a>
-
-
-            <!-- CUSTOMERS - NOW ACTIVE -->
 
             <a href="/customers" class="nav-link">
-
                 <span class="nav-icon">♙</span>
                 <span>Customers</span>
-
             </a>
 
+            <!-- INVENTORY CONNECTED -->
 
-            <a href="#" class="nav-link">
-
+            <a href="/inventory" class="nav-link">
                 <span class="nav-icon">▥</span>
                 <span>Inventory</span>
-
             </a>
 
-
             <a href="#" class="nav-link">
-
                 <span class="nav-icon">◴</span>
                 <span>Reports</span>
-
             </a>
 
         </nav>
 
-
         <div class="sidebar-bottom">
 
             <a href="/logout" class="logout-link">
-
                 <span>↪</span>
                 Logout
-
             </a>
 
         </div>
@@ -110,9 +86,7 @@
 
 
 
-    <!-- ==============================
-         MAIN CONTENT
-    =============================== -->
+    <!-- MAIN CONTENT -->
 
     <main class="dashboard-content">
 
@@ -132,7 +106,6 @@
                 </h1>
 
             </div>
-
 
             <div class="admin-profile">
 
@@ -158,9 +131,7 @@
 
 
 
-        <!-- ==============================
-             WELCOME BANNER
-        =============================== -->
+        <!-- WELCOME BANNER -->
 
         <section class="welcome-banner">
 
@@ -180,7 +151,6 @@
 
             </div>
 
-
             <div class="banner-date">
 
                 <span>Today</span>
@@ -195,9 +165,7 @@
 
 
 
-        <!-- ==============================
-             STAT CARDS
-        =============================== -->
+        <!-- STAT CARDS -->
 
         <section class="stats-grid">
 
@@ -333,10 +301,289 @@
 
 
         <!-- ==============================
-             LOWER SECTION
+             INVENTORY OVERVIEW
         =============================== -->
 
-        <section class="dashboard-grid">
+        <section class="stats-grid" style="margin-top: 20px;">
+
+
+            <!-- TOTAL INVENTORY -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        ▥
+                    </div>
+
+                    <span class="stat-badge">
+                        Total
+                    </span>
+
+                </div>
+
+                <p>
+                    Inventory Items
+                </p>
+
+                <h2>
+                    {{ total_inventory }}
+                </h2>
+
+                <div class="stat-footer">
+                    Items currently in inventory
+                </div>
+
+            </div>
+
+
+
+            <!-- LOW STOCK -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        ⚠
+                    </div>
+
+                    <span class="stat-badge">
+                        Attention
+                    </span>
+
+                </div>
+
+                <p>
+                    Low Stock
+                </p>
+
+                <h2>
+                    {{ low_stock_count }}
+                </h2>
+
+                <div class="stat-footer">
+                    Items below minimum stock
+                </div>
+
+            </div>
+
+
+
+            <!-- OUT OF STOCK -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        !
+                    </div>
+
+                    <span class="stat-badge">
+                        Alert
+                    </span>
+
+                </div>
+
+                <p>
+                    Out of Stock
+                </p>
+
+                <h2>
+                    {{ out_of_stock_count }}
+                </h2>
+
+                <div class="stat-footer">
+                    Items currently unavailable
+                </div>
+
+            </div>
+
+
+
+            <!-- INVENTORY STATUS -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        ✓
+                    </div>
+
+                    <span class="stat-badge">
+                        Live
+                    </span>
+
+                </div>
+
+                <p>
+                    Stock Status
+                </p>
+
+                {% if out_of_stock_count > 0 %}
+
+                <h2>
+                    Alert
+                </h2>
+
+                <div class="stat-footer">
+                    Inventory needs attention
+                </div>
+
+                {% elif low_stock_count > 0 %}
+
+                <h2>
+                    Warning
+                </h2>
+
+                <div class="stat-footer">
+                    Some items are running low
+                </div>
+
+                {% else %}
+
+                <h2>
+                    Good
+                </h2>
+
+                <div class="stat-footer">
+                    Inventory is healthy
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==============================
+             LOW STOCK ALERT
+        =============================== -->
+
+        {% if low_stock_count > 0 or out_of_stock_count > 0 %}
+
+        <section class="dashboard-panel"
+                 style="margin-top: 20px;">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Inventory Alerts
+                    </h3>
+
+                    <p>
+                        Items that need your attention
+                    </p>
+
+                </div>
+
+                <a href="/inventory"
+                   class="quick-action"
+                   style="padding: 8px 15px;">
+
+                    <strong>
+                        Manage Inventory →
+                    </strong>
+
+                </a>
+
+            </div>
+
+
+            <div class="system-list">
+
+
+                <!-- OUT OF STOCK ITEMS -->
+
+                {% for item in out_of_stock_items %}
+
+                <div class="system-item">
+
+                    <div class="system-left">
+
+                        <span class="status-dot"
+                              style="background:#ff4d4d;">
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                {{ item.name }}
+                            </strong>
+
+                            <span>
+                                {{ item.quantity|int }} {{ item.unit }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <span class="online"
+                          style="color:#ff4d4d;">
+                        Out of Stock
+                    </span>
+
+                </div>
+
+                {% endfor %}
+
+
+
+                <!-- LOW STOCK ITEMS -->
+
+                {% for item in low_stock_items %}
+
+                <div class="system-item">
+
+                    <div class="system-left">
+
+                        <span class="status-dot"
+                              style="background:#f5a623;">
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                {{ item.name }}
+                            </strong>
+
+                            <span>
+                                Only {{ item.quantity }} {{ item.unit }} remaining
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <span class="online"
+                          style="color:#f5a623;">
+                        Low Stock
+                    </span>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+
+        <!-- LOWER SECTION -->
+
+        <section class="dashboard-grid"
+                 style="margin-top: 20px;">
 
 
             <!-- QUICK ACTIONS -->
@@ -365,7 +612,8 @@
 
                     <!-- MANAGE MENU -->
 
-                    <a href="/menu" class="quick-action">
+                    <a href="/menu"
+                       class="quick-action">
 
                         <div class="action-icon">
                             ☰
@@ -393,7 +641,8 @@
 
                     <!-- CREATE BILL -->
 
-                    <a href="/billing" class="quick-action">
+                    <a href="/billing"
+                       class="quick-action">
 
                         <div class="action-icon">
                             ₹
@@ -421,7 +670,8 @@
 
                     <!-- CUSTOMERS -->
 
-                    <a href="/customers" class="quick-action">
+                    <a href="/customers"
+                       class="quick-action">
 
                         <div class="action-icon">
                             ♙
@@ -449,7 +699,8 @@
 
                     <!-- INVENTORY -->
 
-                    <a href="#" class="quick-action">
+                    <a href="/inventory"
+                       class="quick-action">
 
                         <div class="action-icon">
                             ▥
@@ -480,9 +731,7 @@
 
 
 
-            <!-- ==============================
-                 SYSTEM STATUS
-            =============================== -->
+            <!-- SYSTEM OVERVIEW -->
 
             <div class="dashboard-panel">
 
@@ -625,6 +874,54 @@
                     </div>
 
 
+
+                    <!-- INVENTORY SYSTEM -->
+
+                    <div class="system-item">
+
+                        <div class="system-left">
+
+                            <span class="status-dot"></span>
+
+                            <div>
+
+                                <strong>
+                                    Inventory System
+                                </strong>
+
+                                <span>
+                                    Stock monitoring active
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        {% if out_of_stock_count > 0 %}
+
+                        <span class="online"
+                              style="color:#ff4d4d;">
+                            Attention
+                        </span>
+
+                        {% elif low_stock_count > 0 %}
+
+                        <span class="online"
+                              style="color:#f5a623;">
+                            Warning
+                        </span>
+
+                        {% else %}
+
+                        <span class="online">
+                            Healthy
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+
                 </div>
 
             </div>
@@ -633,9 +930,7 @@
 
 
 
-        <!-- ==============================
-             FOOTER
-        =============================== -->
+        <!-- FOOTER -->
 
         <footer class="dashboard-footer">
 
@@ -658,9 +953,7 @@
 
 
 
-<!-- ==============================
-     CURRENT DATE
-=============================== -->
+<!-- CURRENT DATE -->
 
 <script>
 

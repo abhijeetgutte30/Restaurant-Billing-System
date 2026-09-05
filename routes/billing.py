@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required
 
 from database.database import db
-from models.models import Menu, Bill, BillItem, Customer
+from models.models import Menu, Bill, BillItem, Customer, Inventory
 
 
 billing = Blueprint("billing", __name__)
@@ -82,7 +82,6 @@ def generate_bill():
         # -------------------------------------------------
 
         if not customer_name:
-
             return jsonify({
                 "success": False,
                 "message": "Please enter customer name."
@@ -90,7 +89,6 @@ def generate_bill():
 
 
         if not mobile:
-
             return jsonify({
                 "success": False,
                 "message": "Please enter mobile number."
@@ -98,7 +96,6 @@ def generate_bill():
 
 
         if not table_no:
-
             return jsonify({
                 "success": False,
                 "message": "Please enter table number."
@@ -142,7 +139,6 @@ def generate_bill():
         ]
 
         if payment_method not in allowed_payment_methods:
-
             payment_method = "Cash"
 
 
@@ -157,22 +153,113 @@ def generate_bill():
         )
 
         if last_bill:
-
             next_number = last_bill.id + 1
-
         else:
-
             next_number = 1
-
 
         invoice_number = (
             f"INV-{next_number:05d}"
         )
 
 
-        # -------------------------------------------------
+        # =================================================
+        # CHECK INVENTORY BEFORE CREATING BILL
+        # =================================================
+
+        stock_updates = []
+
+        for item in items:
+
+            menu_item_id = item.get("id")
+
+            try:
+                quantity = int(
+                    item.get("quantity", 1)
+                )
+            except (ValueError, TypeError):
+
+                return jsonify({
+                    "success": False,
+                    "message": "Invalid item quantity."
+                }), 400
+
+
+            if quantity <= 0:
+
+                return jsonify({
+                    "success": False,
+                    "message": "Item quantity must be greater than zero."
+                }), 400
+
+
+            # ---------------------------------------------
+            # FIND MENU ITEM
+            # ---------------------------------------------
+
+            menu_item = Menu.query.get(
+                menu_item_id
+            )
+
+            if not menu_item:
+
+                return jsonify({
+                    "success": False,
+                    "message": "One of the selected menu items was not found."
+                }), 400
+
+
+            # ---------------------------------------------
+            # FIND INVENTORY ITEM BY NAME
+            # ---------------------------------------------
+
+            inventory_item = Inventory.query.filter(
+                db.func.lower(Inventory.name)
+                == menu_item.name.lower()
+            ).first()
+
+
+            # ---------------------------------------------
+            # INVENTORY ITEM NOT FOUND
+            # ---------------------------------------------
+
+            if not inventory_item:
+
+                return jsonify({
+                    "success": False,
+                    "message": (
+                        f"{menu_item.name} is not available "
+                        f"in Inventory. Please add it first."
+                    )
+                }), 400
+
+
+            # ---------------------------------------------
+            # CHECK AVAILABLE STOCK
+            # ---------------------------------------------
+
+            if inventory_item.quantity < quantity:
+
+                return jsonify({
+                    "success": False,
+                    "message": (
+                        f"Not enough stock for {menu_item.name}. "
+                        f"Available: {inventory_item.quantity:g} "
+                        f"{inventory_item.unit}"
+                    )
+                }), 400
+
+
+            # Save update for later
+            stock_updates.append({
+                "inventory_item": inventory_item,
+                "quantity": quantity,
+                "menu_item": menu_item
+            })
+
+
+        # =================================================
         # CREATE BILL
-        # -------------------------------------------------
+        # =================================================
 
         new_bill = Bill(
 
@@ -189,44 +276,39 @@ def generate_bill():
             payment_method=payment_method
         )
 
-
         db.session.add(new_bill)
 
-        # Get new bill ID before creating items/customer
+        # Get new bill ID
         db.session.flush()
 
 
-        # -------------------------------------------------
-        # CREATE BILL ITEMS
-        # -------------------------------------------------
+        # =================================================
+        # CREATE BILL ITEMS + UPDATE INVENTORY
+        # =================================================
 
-        for item in items:
+        for stock in stock_updates:
 
-            menu_item_id = item.get("id")
-
-            quantity = int(
-                item.get("quantity", 1)
-            )
+            inventory_item = stock["inventory_item"]
+            quantity = stock["quantity"]
+            menu_item = stock["menu_item"]
 
 
-            menu_item = Menu.query.get(
-                menu_item_id
-            )
-
-
-            if not menu_item:
-                continue
-
+            # ---------------------------------------------
+            # CALCULATE ITEM TOTAL
+            # ---------------------------------------------
 
             price = float(
                 menu_item.price
             )
 
-
             item_total = (
                 price * quantity
             )
 
+
+            # ---------------------------------------------
+            # CREATE BILL ITEM
+            # ---------------------------------------------
 
             bill_item = BillItem(
 
@@ -243,15 +325,21 @@ def generate_bill():
                 total=item_total
             )
 
-
             db.session.add(
                 bill_item
             )
 
 
-        # -------------------------------------------------
+            # ---------------------------------------------
+            # DEDUCT INVENTORY
+            # ---------------------------------------------
+
+            inventory_item.quantity -= quantity
+
+
+        # =================================================
         # CREATE CUSTOMER
-        # -------------------------------------------------
+        # =================================================
 
         new_customer = Customer(
 
@@ -264,28 +352,30 @@ def generate_bill():
             bill_id=new_bill.id
         )
 
-
         db.session.add(
             new_customer
         )
 
 
-        # -------------------------------------------------
+        # =================================================
         # SAVE EVERYTHING
-        # -------------------------------------------------
+        # =================================================
 
         db.session.commit()
 
 
-        # -------------------------------------------------
+        # =================================================
         # SUCCESS RESPONSE
-        # -------------------------------------------------
+        # =================================================
 
         return jsonify({
 
             "success": True,
 
-            "message": "Bill generated successfully.",
+            "message": (
+                "Bill generated successfully "
+                "and inventory updated."
+            ),
 
             "invoice_number": invoice_number,
 
@@ -298,6 +388,7 @@ def generate_bill():
             "mobile": mobile,
 
             "table_no": table_no
+
         })
 
 
@@ -319,4 +410,5 @@ def generate_bill():
             "success": False,
 
             "message": "Unable to generate bill."
+
         }), 500

@@ -10,8 +10,8 @@ from routes.menu import menu
 from routes.billing import billing
 from routes.customers import customers
 
-from models.models import Admin, Menu, Customer, Bill
-
+from models.models import Admin, Menu, Customer, Bill, Inventory
+from routes.inventory import inventory
 
 app = Flask(__name__)
 
@@ -40,7 +40,7 @@ app.register_blueprint(menu)
 app.register_blueprint(billing)
 
 app.register_blueprint(customers)
-
+app.register_blueprint(inventory)
 
 # =========================================================
 # CREATE DATABASE & DEFAULT ADMIN
@@ -1761,64 +1761,69 @@ def home():
 """
 
 
-# =========================================================
-# DASHBOARD
-# =========================================================
-
 @app.route("/dashboard")
 @login_required
 def dashboard():
 
-    # -----------------------------------------
-    # TOTAL MENU ITEMS
-    # -----------------------------------------
-
     total_menu = Menu.query.count()
-
-
-    # -----------------------------------------
-    # TOTAL CUSTOMERS
-    # -----------------------------------------
 
     total_customers = Customer.query.count()
 
-
-    # -----------------------------------------
-    # TODAY'S DATE
-    # -----------------------------------------
-
     today = datetime.now().date()
 
-
-    # -----------------------------------------
+    # ==========================================
     # TODAY'S BILLS
-    # -----------------------------------------
+    # ==========================================
 
     today_bills = Bill.query.filter(
         db.func.date(Bill.created_at) == today
     ).all()
 
-
-    # -----------------------------------------
-    # TODAY'S ORDERS
-    # -----------------------------------------
-
     today_orders = len(today_bills)
-
-
-    # -----------------------------------------
-    # TODAY'S SALES
-    # -----------------------------------------
 
     today_sales = sum(
         bill.grand_total or 0
         for bill in today_bills
     )
 
+    # ==========================================
+    # TODAY'S INVENTORY
+    # ==========================================
 
-    # -----------------------------------------
-    # SEND DATA TO DASHBOARD
-    # -----------------------------------------
+    inventory_items = Inventory.query.filter_by(
+        stock_date=today
+    ).all()
+
+    total_inventory = len(inventory_items)
+
+    # ==========================================
+    # LOW STOCK
+    # ==========================================
+
+    low_stock_items = [
+        item
+        for item in inventory_items
+        if item.current_quantity > 0
+        and item.current_quantity <= item.minimum_stock
+    ]
+
+    # ==========================================
+    # OUT OF STOCK
+    # ==========================================
+
+    out_of_stock_items = [
+        item
+        for item in inventory_items
+        if item.current_quantity <= 0
+    ]
+
+    low_stock_count = len(low_stock_items)
+
+    out_of_stock_count = len(out_of_stock_items)
+
+    # ==========================================
+    # DASHBOARD
+    # ==========================================
 
     return render_template(
         "dashboard.html",
@@ -1831,9 +1836,18 @@ def dashboard():
 
         today_orders=today_orders,
 
-        today_sales=today_sales
-    )
+        today_sales=today_sales,
 
+        total_inventory=total_inventory,
+
+        low_stock_count=low_stock_count,
+
+        out_of_stock_count=out_of_stock_count,
+
+        low_stock_items=low_stock_items,
+
+        out_of_stock_items=out_of_stock_items
+    )
     
 
 

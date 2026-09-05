@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from datetime import datetime
 from flask_login import login_required
 
 from config import Config, bcrypt, login_manager
@@ -1768,17 +1769,56 @@ def home():
 @login_required
 def dashboard():
 
-    # Total menu items
+    # -----------------------------------------
+    # TOTAL MENU ITEMS
+    # -----------------------------------------
+
     total_menu = Menu.query.count()
 
 
-    # Total customers
+    # -----------------------------------------
+    # TOTAL CUSTOMERS
+    # -----------------------------------------
+
     total_customers = Customer.query.count()
 
 
-    # Total orders / bills
-    total_orders = Bill.query.count()
+    # -----------------------------------------
+    # TODAY'S DATE
+    # -----------------------------------------
 
+    today = datetime.now().date()
+
+
+    # -----------------------------------------
+    # TODAY'S BILLS
+    # -----------------------------------------
+
+    today_bills = Bill.query.filter(
+        db.func.date(Bill.created_at) == today
+    ).all()
+
+
+    # -----------------------------------------
+    # TODAY'S ORDERS
+    # -----------------------------------------
+
+    today_orders = len(today_bills)
+
+
+    # -----------------------------------------
+    # TODAY'S SALES
+    # -----------------------------------------
+
+    today_sales = sum(
+        bill.grand_total or 0
+        for bill in today_bills
+    )
+
+
+    # -----------------------------------------
+    # SEND DATA TO DASHBOARD
+    # -----------------------------------------
 
     return render_template(
         "dashboard.html",
@@ -1787,8 +1827,14 @@ def dashboard():
 
         total_customers=total_customers,
 
-        total_orders=total_orders
+        total_orders=Bill.query.count(),
+
+        today_orders=today_orders,
+
+        today_sales=today_sales
     )
+
+    
 
 
 # =========================================================

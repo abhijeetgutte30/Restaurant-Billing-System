@@ -1,4 +1,3 @@
-```javascript
 // ==========================================
 // RESTAURANT BILLING SYSTEM
 // BILLING JAVASCRIPT
@@ -17,7 +16,7 @@ let selectedPayment = "Cash";
 // ADD ITEM TO CART
 // ==========================================
 
-function addToCart(id, name, price) {
+window.addToCart = function(id, name, price) {
 
     id = Number(id);
     price = Number(price);
@@ -179,7 +178,7 @@ function updateCart() {
 // CHANGE QUANTITY
 // ==========================================
 
-function changeQuantity(id, change) {
+window.changeQuantity = function(id, change) {
 
     id = Number(id);
 
@@ -342,7 +341,7 @@ document.addEventListener(
 // PAYMENT METHOD
 // ==========================================
 
-function selectPayment(button, method) {
+window.selectPayment = function(button, method) {
 
     selectedPayment = method;
 
@@ -424,7 +423,7 @@ document.addEventListener(
 // CLEAR CART
 // ==========================================
 
-function clearCart() {
+window.clearCart = function() {
 
     if (cart.length === 0) {
 
@@ -454,7 +453,7 @@ function clearCart() {
 // GENERATE BILL
 // ==========================================
 
-async function generateBill() {
+window.generateBill = async function() {
 
     // --------------------------------------
     // CHECK CART
@@ -921,4 +920,3 @@ document.addEventListener(
 
     }
 );
-```

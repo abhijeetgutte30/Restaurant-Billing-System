@@ -10,6 +10,7 @@ from routes.menu import menu
 from routes.billing import billing
 from routes.customers import customers
 
+
 from models.models import Admin, Menu, Customer, Bill, Inventory
 from routes.inventory import inventory
 
@@ -40,7 +41,10 @@ app.register_blueprint(menu)
 app.register_blueprint(billing)
 
 app.register_blueprint(customers)
+
 app.register_blueprint(inventory)
+
+
 
 # =========================================================
 # CREATE DATABASE & DEFAULT ADMIN
